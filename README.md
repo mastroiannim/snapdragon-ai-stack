@@ -46,6 +46,27 @@
 
 ---
 
+## 📋 Prerequisiti di Sistema
+
+Prima di iniziare, assicurati di avere installato:
+
+1. **Sistema Operativo**: Windows 11 on ARM64 (Snapdragon X Elite / Plus / Extreme).
+2. **WSL2 (Windows Subsystem for Linux)**: Necessario per eseguire Open-WebUI in ambiente Linux isolato e ultra-stabile:
+   `powershell
+   wsl --install -d Ubuntu
+   `
+   *All'interno del terminale WSL Ubuntu, installa Open-WebUI:*
+   `ash
+   pip install open-webui
+   `
+3. **Node.js (LTS v20+ o v22+ ARM64)**: Necessario per il runtime del *Caveman Fast Proxy* (porta 18182).
+   - Scaricabile da [nodejs.org](https://nodejs.org).
+4. **GenieX CLI (Opzionale per NPU)**:
+   - Scaricabile da [geniex.ai](https://geniex.ai) per abilitare il backend Hexagon NPU a 80 TOPS.
+5. **Driver Qualcomm Adreno GPU**: Già inclusi nel sistema Windows 11 ARM64 (C:\Windows\System32\vulkan-1.dll).
+
+---
+
 ## 🚀 Quickstart: Come Iniziare
 
 ### 1. Clona il repository
