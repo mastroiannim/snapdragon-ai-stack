@@ -1,34 +1,39 @@
-# ? Snapdragon AI Stack: Native ARM64 Local LLM Infrastructure
+﻿# ⚡ Snapdragon AI Stack: Native ARM64 Local LLM Infrastructure
 
 > **High-Performance Local AI Suite for Qualcomm Snapdragon X Elite / Extreme (Windows on ARM64)**  
-> Sfrutta l'intero potenziale del SoC **Snapdragon? X2 Elite Extreme X2E94100** (48GB UMA, 228 GB/s, 18 Core Oryon a 4.7 GHz, GPU Adreno X2-90 a 1.85 GHz e NPU Hexagon a 80 TOPS).
+> Sfrutta l'intero potenziale del SoC **Snapdragon® X2 Elite Extreme X2E94100** (48GB UMA, 228 GB/s, 18 Core Oryon a 4.7 GHz, GPU Adreno X2-90 a 1.85 GHz e NPU Hexagon a 80 TOPS).
 
 ---
 
-## ?? Caratteristiche Principali
+## 🌟 Caratteristiche Principali
 
-- ?? **Build Nativa ARM64 Vulkan 1.4 (ggml-vulkan)**: Eseguibili llama-server.exe, llama-bench.exe e llama-cli.exe compilati nativamente su Clang/LLVM 22 per Adreno X2-90 (fino a **35 tok/s** su 8B e **12 tok/s** su 27B).
-- ?? **Hexagon NPU Hub (80 TOPS)**: Server locale su porta 18181 tramite QNN/HTP con prefill fulmineo a **837.6 tok/s** e consumo di soli **4W?8W**.
-- ? **Caveman Fast Proxy (Porta 18182)**: Middleware intelligente Node.js che comprime i prompt di sistema del **98.8%** (da 3.400+ a ~40 token), azzera il Time-To-First-Token (TTFT < 80ms) e offre auto-fallback tra NPU e GPU.
-- ??? **Multimodale + Speculative Decoding (Porta 18183)**: Supporto per visione (immagini/screenshot) con *Muse Glimmer 30B* e DFlash Speculative Decoding fino a **20 tok/s**.
-- ?? **Dashboard Unificata Open-WebUI (Porta 8080)**: Interfaccia web per chattare con tutti i modelli locali.
-- ?? **Compatibilit? Totale con VSCode Cline & OpenClaw**: Endpoint compatibili OpenAI /v1/chat/completions.
+- 🚀 **Motori di Inferenza Nativa ARM64 Completi (in/)**:
+  - **llama-cpp-vulkan-arm64**: Backend Vulkan 1.4 bare-metal per Adreno GPU (fino a **35 tok/s** su 8B e **12 tok/s** su 27B).
+  - **llama-cpp-hexagon-arm64**: Backend Hexagon NPU con runtime QAIRT / QNN v75/v79/v81 (ggml-hexagon.dll, HTP libraries).
+  - **llama-cpp-adreno-arm64**: Backend GPU OpenCL legacy (ggml-opencl.dll).
+  - **llama-cpp-arm64**: Backend CPU multi-thread nativo Oryon ARM64.
+- 🧠 **Hexagon NPU Hub (80 TOPS)**: Server locale su porta 18181 tramite QNN/HTP con prefill fulmineo a **837.6 tok/s** e consumo di soli **4W–8W**.
+- ⚡ **Caveman Fast Proxy (Porta 18182)**: Middleware intelligente Node.js che comprime i prompt di sistema del **98.8%** (da 3.400+ a ~40 token), azzera il Time-To-First-Token (TTFT < 80ms) e offre auto-fallback tra NPU e GPU.
+- 👁️ **Multimodale + Speculative Decoding (Porta 18183)**: Supporto per visione (immagini/screenshot) con *Muse Glimmer 30B* e DFlash Speculative Decoding fino a **20 tok/s**.
+- 🌐 **Dashboard Unificata Open-WebUI (Porta 8080)**: Interfaccia web per chattare con tutti i modelli locali.
+- 🔌 **Compatibilità Totale con VSCode Cline & OpenClaw**: Endpoint compatibili OpenAI /v1/chat/completions.
+- 🛠️ **Toolchain e SDK di Build Inclusi (sdk/ e scripts/)**: Header Vulkan e SPIR-V ufficiali Khronos, librerie d'importazione libvulkan-1.a, patch C++ e script di compilazione automatizzati con Clang/LLVM 22 ARM64.
 
 ---
 
-## ?? Matrice Prestazionale (Qwen3-8B su Snapdragon X2 Elite Extreme)
+## 📊 Matrice Prestazionale (Qwen3-8B su Snapdragon X2 Elite Extreme)
 
 | Metrica | Vulkan Nativo (Adreno GPU) | Hexagon NPU (HTP 80 TOPS) | Caveman Proxy (Porta 18182) |
 | :--- | :--- | :--- | :--- |
 | **Prefill Speed** | 28.4 tok/s | **837.6 tok/s** | **Istantaneo (40 token)** |
-| **Decode Speed** | **24 ? 35 tok/s** | 18 ? 25 tok/s | **24 ? 35 tok/s** |
-| **Latenza TTFT (Prompt 3.500 tok)** | ~120 s | ~4.2 s | **? 0.08 s (80 ms)** |
-| **Consumo Energetico** | 14W ? 20W | **4W ? 8W (Max autonomia)** | N/A (Middleware) |
-| **Temperatura SoC** | ~46 ? 51 ?C | **~41 ? 44 ?C (Freddo)** | N/A |
+| **Decode Speed** | **24 – 35 tok/s** | 18 – 25 tok/s | **24 – 35 tok/s** |
+| **Latenza TTFT (Prompt 3.500 tok)** | ~120 s | ~4.2 s | **⚡ 0.08 s (80 ms)** |
+| **Consumo Energetico** | 14W – 20W | **4W – 8W (Max autonomia)** | N/A (Middleware) |
+| **Temperatura SoC** | ~46 – 51 °C | **~41 – 44 °C (Freddo)** | N/A |
 
 ---
 
-## ??? Mappa Porte & Launcher Rapidi
+## 🗺️ Mappa Porte & Launcher Rapidi
 
 | Porta | Servizio | Hardware | Scopo Consigliato |
 | :--- | :--- | :--- | :--- |
@@ -41,7 +46,7 @@
 
 ---
 
-## ?? Quickstart: Come Iniziare
+## 🚀 Quickstart: Come Iniziare
 
 1. **Clona il repository**:
    `ash
@@ -57,23 +62,24 @@
 
 ---
 
-## ?? Struttura del Repository
+## 📂 Struttura del Repository
 
 `	ext
 snapdragon-ai-stack/
-??? launchers/       # Script di avvio rapidi portabili (.cmd)
-??? proxy/           # Caveman Fast Proxy (Node.js)
-??? bin/             # Binari ARM64 compilati (llama-server.exe, DLL)
-??? configs/         # Template di configurazione (OpenClaw, Cline)
-??? patches/         # Patch C++ per compilazione Win32 ARM64
-??? scripts/         # Script PowerShell di automazione e build
-??? docs/            # Documentazione approfondita (Architettura, Formule 228 GB/s, Benchmark)
-??? .gitignore       # Esclusione automatica file pesanti (*.gguf, build/)
-??? README.md
+├── launchers/       # Script di avvio rapidi portabili (.cmd)
+├── proxy/           # Caveman Fast Proxy (Node.js)
+├── bin/             # Motori di inferenza compilati (Vulkan, Hexagon NPU, Adreno OpenCL, CPU)
+├── sdk/             # Vulkan-Headers, SPIRV-Headers e librerie d'importazione libvulkan-1.a
+├── configs/         # Template di configurazione (OpenClaw, Cline)
+├── patches/         # Patch C++ per compilazione Win32 ARM64
+├── scripts/         # Script PowerShell di automazione, setup toolchain e build
+├── docs/            # Documentazione approfondita (Architettura, Formule 228 GB/s, Benchmark)
+├── .gitignore       # Esclusione automatica file pesanti (*.gguf, build/)
+└── README.md
 `
 
 ---
 
-## ?? Licenza
+## 📄 Licenza
 
 Distribuito sotto licenza **MIT**. Consulta il file [LICENSE](LICENSE) per maggiori informazioni.
