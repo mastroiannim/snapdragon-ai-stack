@@ -1,10 +1,10 @@
-import http from 'node:http';
+﻿import http from 'node:http';
 
-const PROXY_PORT = process.env.PORT || 18182;
+const PROXY_PORT = 18182;
 // Default to GenieX NPU 18181, or llama-server if specified
 let UPSTREAM_URL = process.env.UPSTREAM_URL || 'http://127.0.0.1:18181';
 
-const SLIM_SYSTEM_PROMPT = Sei un assistente AI avanzato. Rispondi sempre in italiano, in modo chiaro, utile, diretto e accurato. Non generare monologhi interni superflui o prolissita.;
+const SLIM_SYSTEM_PROMPT = `Sei un assistente AI avanzato. Rispondi sempre in italiano, in modo chiaro, utile, diretto e accurato. Non generare monologhi interni superflui o prolissitÃ .`;
 
 const server = http.createServer((req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -18,7 +18,7 @@ const server = http.createServer((req, res) => {
   }
 
   // Dynamic upstream routing based on model or header
-  const url = new URL(req.url, http:// + req.headers.host);
+  const url = new URL(req.url, `http://${req.headers.host}`);
   
   if (req.method === 'GET' && (url.pathname === '/v1/models' || url.pathname === '/models')) {
     const endpoints = [
@@ -30,7 +30,7 @@ const server = http.createServer((req, res) => {
 
     Promise.allSettled(
       endpoints.map(ep => 
-        fetch(${ep.url}, { signal: AbortSignal.timeout(1500) })
+        fetch(`${ep.url}${url.pathname}${url.search}`, { signal: AbortSignal.timeout(1500) })
           .then(res => res.ok ? res.json() : null)
           .catch(() => null)
       )
@@ -108,8 +108,8 @@ const server = http.createServer((req, res) => {
 
         for (const ep of uniqueEndpoints) {
           try {
-            const targetUrl = ${ep};
-            console.log([Compressor Proxy] Ingesting request -> Forwarding compressed prompt ( msgs) to ...);
+            const targetUrl = `${ep}${url.pathname}${url.search}`;
+            console.log(`[Compressor Proxy] Ingesting request -> Forwarding compressed prompt (${payload.messages.length} msgs) to ${targetUrl}...`);
             upstreamRes = await fetch(targetUrl, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -118,7 +118,7 @@ const server = http.createServer((req, res) => {
             activeTargetUrl = targetUrl;
             break;
           } catch (err) {
-            console.warn([Compressor Proxy] Endpoint  not reachable (). Trying fallback...);
+            console.warn(`[Compressor Proxy] Endpoint ${ep} not reachable (${err.message}). Trying fallback...`);
           }
         }
 
@@ -151,11 +151,11 @@ const server = http.createServer((req, res) => {
           }
           res.end();
           const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
-          console.log([Compressor Proxy] <- Stream complete in s ( bytes).);
+          console.log(`[Compressor Proxy] <- Stream complete in ${elapsed}s (${totalBytes} bytes).`);
         } else {
           const json = await upstreamRes.json();
           const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
-          console.log([Compressor Proxy] <- Response complete in s.);
+          console.log(`[Compressor Proxy] <- Response complete in ${elapsed}s.`);
           res.writeHead(200, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify(json));
         }
@@ -173,9 +173,9 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PROXY_PORT, '127.0.0.1', () => {
-  console.log(================================================================);
-  console.log(? Prompt Compressor Proxy running on http://127.0.0.1:);
-  console.log(   - Compresses 3,000+ token OpenClaw prompts down to ~40 tokens);
-  console.log(   - Routes to GenieX NPU (18181) e GPU (18184/18185/18183));
-  console.log(================================================================);
+  console.log(`================================================================`);
+  console.log(`âš¡ Prompt Compressor Proxy running on http://127.0.0.1:${PROXY_PORT}`);
+  console.log(`   - Compresses 3,000+ token OpenClaw prompts down to ~40 tokens`);
+  console.log(`   - Routes to GenieX NPU (18181) e GPU (18184/18185/18183)`);
+  console.log(`================================================================`);
 });
