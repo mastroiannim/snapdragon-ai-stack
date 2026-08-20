@@ -1,10 +1,10 @@
-﻿import http from 'node:http';
+import http from 'node:http';
 
 const PROXY_PORT = 18182;
 // Default to GenieX NPU 18181, or llama-server if specified
 let UPSTREAM_URL = process.env.UPSTREAM_URL || 'http://127.0.0.1:18181';
 
-const SLIM_SYSTEM_PROMPT = `Sei un assistente AI avanzato. Rispondi sempre in italiano, in modo chiaro, utile, diretto e accurato. Non generare monologhi interni superflui o prolissitÃ .`;
+const SLIM_SYSTEM_PROMPT = `Sei un assistente AI avanzato. Rispondi sempre in italiano, in modo chiaro, utile, diretto e accurato. /no_think`;
 
 const server = http.createServer((req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -62,6 +62,7 @@ const server = http.createServer((req, res) => {
     req.on('end', async () => {
       try {
         const payload = JSON.parse(body);
+        const requestedModel = payload.model || '';
 
         // Strip -caveman suffix if WebUI sent it
         if (payload.model && payload.model.endsWith('-caveman')) {
@@ -133,6 +134,9 @@ const server = http.createServer((req, res) => {
           return;
         }
 
+        const fallbackId = 'chatcmpl-' + Math.random().toString(36).substring(2, 15);
+        const fallbackCreated = Math.floor(Date.now() / 1000);
+
         if (payload.stream) {
           res.writeHead(200, {
             'Content-Type': 'text/event-stream',
@@ -140,20 +144,95 @@ const server = http.createServer((req, res) => {
             'Connection': 'keep-alive'
           });
 
+          const decoder = new TextDecoder();
           const reader = upstreamRes.body.getReader();
           let totalBytes = 0;
+          let buffer = '';
 
           while (true) {
             const { done, value } = await reader.read();
             if (done) break;
             totalBytes += value.length;
-            res.write(value);
+            buffer += decoder.decode(value, { stream: true });
+
+            const lines = buffer.split('\n');
+            buffer = lines.pop(); // Keep incomplete line
+
+            for (const line of lines) {
+              const trimmed = line.trim();
+              if (trimmed.startsWith('data:')) {
+                const dataPayload = trimmed.slice(5).trim();
+                if (dataPayload === '[DONE]') {
+                  res.write(`data: [DONE]\n\n`);
+                } else if (dataPayload) {
+                  try {
+                    const parsed = JSON.parse(dataPayload);
+                    if (!parsed.model || parsed.model === '') {
+                      parsed.model = requestedModel;
+                    }
+                    if (!parsed.id || parsed.id === '') {
+                      parsed.id = fallbackId;
+                    }
+                    if (!parsed.created || parsed.created === 0) {
+                      parsed.created = fallbackCreated;
+                    }
+                    res.write(`data: ${JSON.stringify(parsed)}\n\n`);
+                  } catch {
+                    res.write(`${line}\n`);
+                  }
+                } else {
+                  res.write(`\n`);
+                }
+              } else if (line.length > 0) {
+                res.write(`${line}\n`);
+              } else {
+                res.write(`\n`);
+              }
+            }
           }
+
+          if (buffer.trim()) {
+            const trimmed = buffer.trim();
+            if (trimmed.startsWith('data:')) {
+              const dataPayload = trimmed.slice(5).trim();
+              if (dataPayload === '[DONE]') {
+                res.write(`data: [DONE]\n\n`);
+              } else if (dataPayload) {
+                try {
+                  const parsed = JSON.parse(dataPayload);
+                  if (!parsed.model || parsed.model === '') {
+                    parsed.model = requestedModel;
+                  }
+                  if (!parsed.id || parsed.id === '') {
+                    parsed.id = fallbackId;
+                  }
+                  if (!parsed.created || parsed.created === 0) {
+                    parsed.created = fallbackCreated;
+                  }
+                  res.write(`data: ${JSON.stringify(parsed)}\n\n`);
+                } catch {
+                  res.write(`${buffer}\n`);
+                }
+              }
+            } else {
+              res.write(`${buffer}\n`);
+            }
+          }
+
           res.end();
           const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
           console.log(`[Compressor Proxy] <- Stream complete in ${elapsed}s (${totalBytes} bytes).`);
         } else {
           const json = await upstreamRes.json();
+          if (!json.model || json.model === '') {
+            json.model = requestedModel;
+          }
+          if (!json.id || json.id === '') {
+            json.id = fallbackId;
+          }
+          if (!json.created || json.created === 0) {
+            json.created = fallbackCreated;
+          }
           const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
           console.log(`[Compressor Proxy] <- Response complete in ${elapsed}s.`);
           res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -174,7 +253,7 @@ const server = http.createServer((req, res) => {
 
 server.listen(PROXY_PORT, '127.0.0.1', () => {
   console.log(`================================================================`);
-  console.log(`âš¡ Prompt Compressor Proxy running on http://127.0.0.1:${PROXY_PORT}`);
+  console.log(`⚡ Prompt Compressor Proxy running on http://127.0.0.1:${PROXY_PORT}`);
   console.log(`   - Compresses 3,000+ token OpenClaw prompts down to ~40 tokens`);
   console.log(`   - Routes to GenieX NPU (18181) e GPU (18184/18185/18183)`);
   console.log(`================================================================`);

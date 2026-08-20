@@ -1,4 +1,4 @@
-﻿# ⚡ Snapdragon AI Stack: Native ARM64 Local LLM Infrastructure
+# ⚡ Snapdragon AI Stack: Native ARM64 Local LLM Infrastructure
 
 > **High-Performance Local AI Suite for Qualcomm Snapdragon X Elite / Extreme (Windows on ARM64)**  
 > Sfrutta l'intero potenziale del SoC **Snapdragon® X2 Elite Extreme X2E94100** (48GB UMA, 228 GB/s, 18 Core Oryon a 4.7 GHz, GPU Adreno X2-90 a 1.85 GHz e NPU Hexagon a 80 TOPS).
@@ -52,13 +52,15 @@ Prima di iniziare, assicurati di avere installato:
 
 1. **Sistema Operativo**: Windows 11 on ARM64 (Snapdragon X Elite / Plus / Extreme).
 2. **WSL2 (Windows Subsystem for Linux)**: Necessario per eseguire Open-WebUI in ambiente Linux isolato e ultra-stabile:
-   `powershell
+   ```powershell
    wsl --install -d Ubuntu
-   `
-   *All'interno del terminale WSL Ubuntu, installa Open-WebUI:*
-   `ash
-   pip install open-webui
-   `
+   ```
+   *All'interno del terminale WSL Ubuntu, crea l'ambiente virtuale dedicato e installa Open-WebUI:*
+   ```bash
+   sudo apt update && sudo apt install -y python3-pip python3-venv
+   python3 -m venv ~/open-webui-env
+   ~/open-webui-env/bin/pip install open-webui
+   ```
 3. **Node.js (LTS v20+ o v22+ ARM64)**: Necessario per il runtime del *Caveman Fast Proxy* (porta 18182).
    - Scaricabile da [nodejs.org](https://nodejs.org).
 4. **GenieX CLI (Opzionale per NPU)**:
