@@ -48,17 +48,30 @@
 
 ## 🚀 Quickstart: Come Iniziare
 
-1. **Clona il repository**:
-   `ash
-   git clone https://github.com/tuo-username/snapdragon-ai-stack.git
-   cd snapdragon-ai-stack
-   `
-2. **Scarica i modelli GGUF consigliati**:
-   `powershell
-   .\scripts\download_models.ps1
-   `
-3. **Avvia il server desiderato** dalla cartella launchers/ (ad esempio 4_Server_Qwen8B_GPU.cmd o 2_Server_GenieX_NPU.cmd).
-4. **Avvia il Proxy e Open-WebUI** per iniziare a chattare immediatamente.
+### 1. Clona il repository
+`ash
+git clone https://github.com/tuo-username/snapdragon-ai-stack.git
+cd snapdragon-ai-stack
+`
+
+### 2. Configura il Networking WSL2 (Mirrored Mode)
+Per consentire a Open-WebUI (in esecuzione su WSL2) di connettersi ai server NPU/GPU di Windows su 127.0.0.1 senza blocchi di rete:
+`powershell
+Copy-Item configs\wslconfig.template "C:\Users\mstmh\.wslconfig" -Force
+wsl --shutdown
+`
+
+### 3. Scarica i Modelli GGUF
+Scarica i modelli quantizzati ottimizzati per l'architettura Snapdragon:
+`powershell
+.\scripts\download_models.ps1
+`
+
+### 4. Avvia i Server e Inizia a Chattare
+Dalla cartella launchers/ puoi avviare con un doppio clic:
+1. **2_Server_GenieX_NPU.cmd** (per NPU 80 TOPS) oppure **4_Server_Qwen8B_GPU.cmd** (per GPU Vulkan).
+2. **6_Proxy_Compressore_OpenClaw.cmd** (per azzerare il TTFT e comprimere i prompt).
+3. **1_Avvia_Dashboard_WebUI.cmd** (per aprire l'interfaccia nel browser su http://localhost:8080).
 
 ---
 
@@ -70,7 +83,7 @@ snapdragon-ai-stack/
 ├── proxy/           # Caveman Fast Proxy (Node.js)
 ├── bin/             # Motori di inferenza compilati (Vulkan, Hexagon NPU, Adreno OpenCL, CPU)
 ├── sdk/             # Vulkan-Headers, SPIRV-Headers e librerie d'importazione libvulkan-1.a
-├── configs/         # Template di configurazione (OpenClaw, Cline)
+├── configs/         # Template di configurazione (OpenClaw, Cline, .wslconfig)
 ├── patches/         # Patch C++ per compilazione Win32 ARM64
 ├── scripts/         # Script PowerShell di automazione, setup toolchain e build
 ├── docs/            # Documentazione approfondita (Architettura, Formule 228 GB/s, Benchmark)
