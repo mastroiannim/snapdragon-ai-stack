@@ -1,0 +1,42 @@
+diff --git a/vendor/cpp-httplib/httplib.cpp b/vendor/cpp-httplib/httplib.cpp
+index 81cdcfe..f727ed1 100644
+--- a/vendor/cpp-httplib/httplib.cpp
++++ b/vendor/cpp-httplib/httplib.cpp
+@@ -1517,8 +1517,8 @@ bool mmap::open(const char *path) {
+   if (wpath.empty()) { return false; }
+ 
+   hFile_ =
+-      ::CreateFile2(wpath.c_str(), GENERIC_READ,
+-                    FILE_SHARE_READ | FILE_SHARE_WRITE, OPEN_EXISTING, NULL);
++      ::CreateFileW(wpath.c_str(), GENERIC_READ,
++                    FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+ 
+   if (hFile_ == INVALID_HANDLE_VALUE) { return false; }
+ 
+@@ -1535,7 +1535,7 @@ bool mmap::open(const char *path) {
+   size_ = static_cast<size_t>(size.QuadPart);
+ 
+   hMapping_ =
+-      ::CreateFileMappingFromApp(hFile_, NULL, PAGE_READONLY, size_, NULL);
++      ::CreateFileMappingW(hFile_, NULL, PAGE_READONLY, 0, 0, NULL);
+ 
+   // Special treatment for an empty file...
+   if (hMapping_ == NULL && size_ == 0) {
+diff --git a/vendor/cpp-httplib/httplib.h b/vendor/cpp-httplib/httplib.h
+index 6fc86c7..1b077b1 100644
+--- a/vendor/cpp-httplib/httplib.h
++++ b/vendor/cpp-httplib/httplib.h
+@@ -12,9 +12,11 @@
+ #define CPPHTTPLIB_VERSION_NUM "0x003501"
+ 
+ #ifdef _WIN32
+-#if defined(_WIN32_WINNT) && _WIN32_WINNT < 0x0A00
+-#error                                                                         \
+-    "cpp-httplib doesn't support Windows 8 or lower. Please use Windows 10 or later."
++#ifndef _WIN32_WINNT
++#define _WIN32_WINNT 0x0A00
++#elif _WIN32_WINNT < 0x0A00
++#undef _WIN32_WINNT
++#define _WIN32_WINNT 0x0A00
+ #endif
+ #endif

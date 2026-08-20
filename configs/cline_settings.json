@@ -1,0 +1,12 @@
+{
+  "apiProvider": "openai-compatible",
+  "apiModelId": "Qwen3.8-27B-Adreno-GPU",
+  "openAiBaseUrl": "http://127.0.0.1:18184/v1",
+  "openAiApiKey": "local",
+  "openAiModelId": "Qwen3.8-27B-Adreno-GPU",
+  "openAiCustomModelInfo": {
+    "contextWindow": 16384,
+    "maxTokens": 4096,
+    "supportsPromptCache": true
+  }
+}

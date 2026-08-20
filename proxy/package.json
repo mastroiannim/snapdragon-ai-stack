@@ -1,0 +1,13 @@
+{
+  "name": "caveman-fast-proxy",
+  "version": "1.0.0",
+  "description": "Ultra-fast prompt compressor and multi-backend load balancer for Qualcomm Snapdragon X AI Stack",
+  "main": "caveman-proxy.mjs",
+  "type": "module",
+  "scripts": {
+    "start": "node caveman-proxy.mjs"
+  },
+  "keywords": ["snapdragon", "npu", "vulkan", "ai", "proxy", "llama.cpp", "openclaw"],
+  "author": "",
+  "license": "MIT"
+}

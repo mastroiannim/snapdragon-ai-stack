@@ -1,0 +1,21 @@
+# Modelli e pesi pesanti
+*.gguf
+*.bin
+models/
+.cache/
+
+# Directory di build e compilatori
+build/
+build-*/
+toolchain/
+vulkan_sdk/
+vulkan_lib/
+Vulkan-Headers/
+SPIRV-Headers/
+
+# Node.js e Logs
+node_modules/
+*.log
+.webui_secret_key
+.DS_Store
+Thumbs.db
