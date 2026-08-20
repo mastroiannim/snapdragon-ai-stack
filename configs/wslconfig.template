@@ -1,0 +1,6 @@
+# .wslconfig per Qualcomm Snapdragon X (Windows on ARM)
+# Copia questo file in %USERPROFILE%\.wslconfig per abilitare il networking mirrored tra Windows e WSL2.
+# Permette a Open-WebUI (in WSL) di connettersi direttamente ai server NPU/GPU su 127.0.0.1.
+
+[wsl2]
+networkingMode=mirrored
