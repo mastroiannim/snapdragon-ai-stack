@@ -7,7 +7,7 @@
 
 ## 🌟 Caratteristiche Principali
 
-- 🚀 **Motori di Inferenza Nativa ARM64 Completi (in/)**:
+- 🚀 **Motori di Inferenza Nativa ARM64 Completi (in `bin/`):**
   - **llama-cpp-vulkan-arm64**: Backend Vulkan 1.4 bare-metal per Adreno GPU (fino a **35 tok/s** su 8B e **12 tok/s** su 27B).
   - **llama-cpp-hexagon-arm64**: Backend Hexagon NPU con runtime QAIRT / QNN v75/v79/v81 (ggml-hexagon.dll, HTP libraries).
   - **llama-cpp-adreno-arm64**: Backend GPU OpenCL legacy (ggml-opencl.dll).
@@ -72,35 +72,44 @@ Prima di iniziare, assicurati di avere installato:
 ## 🚀 Quickstart: Come Iniziare
 
 ### 1. Clona il repository
-`ash
+```bash
 git clone https://github.com/tuo-username/snapdragon-ai-stack.git
 cd snapdragon-ai-stack
-`
+```
 
-### 2. Configura il Networking WSL2 (Mirrored Mode)
-Per consentire a Open-WebUI (in esecuzione su WSL2) di connettersi ai server NPU/GPU di Windows su 127.0.0.1 senza blocchi di rete:
-`powershell
-Copy-Item configs\wslconfig.template "C:\Users\mstmh\.wslconfig" -Force
+### 2. Configura l'Ambiente e le Risorse (Onboarding Rapido)
+Puoi eseguire la verifica automatica e la configurazione di tutte le risorse con un solo comando:
+```powershell
+.\scripts\onboarding.ps1
+```
+*(Oppure fai doppio clic su `launchers/0_Setup_Onboarding.cmd`)*
+
+Lo script verificherà l'architettura ARM64, i driver Vulkan, configurerà il networking WSL2 (`.wslconfig`), verificherà Node.js e controllerà i modelli.
+
+Se preferisci configurare `.wslconfig` manualmente per il Mirrored Networking WSL2:
+```powershell
+Copy-Item configs\wslconfig.template "$HOME\.wslconfig" -Force
 wsl --shutdown
-`
+```
 
 ### 3. Scarica i Modelli GGUF
 Scarica i modelli quantizzati ottimizzati per l'architettura Snapdragon:
-`powershell
+```powershell
 .\scripts\download_models.ps1
-`
+```
 
 ### 4. Avvia i Server e Inizia a Chattare
-Dalla cartella launchers/ puoi avviare con un doppio clic:
-1. **2_Server_GenieX_NPU.cmd** (per NPU 80 TOPS) oppure **4_Server_Qwen8B_GPU.cmd** (per GPU Vulkan).
-2. **6_Proxy_Compressore_OpenClaw.cmd** (per azzerare il TTFT e comprimere i prompt).
-3. **1_Avvia_Dashboard_WebUI.cmd** (per aprire l'interfaccia nel browser su http://localhost:8080).
+Dalla cartella `launchers/` puoi avviare con un doppio clic:
+1. `0_Setup_Onboarding.cmd` (per diagnosticare e verificare l'intero stack).
+2. `2_Server_GenieX_NPU.cmd` (per NPU 80 TOPS) oppure `4_Server_Qwen8B_GPU.cmd` (per GPU Vulkan).
+3. `6_Proxy_Compressore_OpenClaw.cmd` (per azzerare il TTFT e comprimere i prompt).
+4. `1_Avvia_Dashboard_WebUI.cmd` (per aprire l'interfaccia nel browser su http://localhost:8080).
 
 ---
 
 ## 📂 Struttura del Repository
 
-`	ext
+```text
 snapdragon-ai-stack/
 ├── launchers/       # Script di avvio rapidi portabili (.cmd)
 ├── proxy/           # Caveman Fast Proxy (Node.js)
@@ -112,7 +121,7 @@ snapdragon-ai-stack/
 ├── docs/            # Documentazione approfondita (Architettura, Formule 228 GB/s, Benchmark)
 ├── .gitignore       # Esclusione automatica file pesanti (*.gguf, build/)
 └── README.md
-`
+```
 
 ---
 
