@@ -1,5 +1,5 @@
 @echo off
-title Server GenieX NPU (Porta 18181) - Qwen3-8B e Qwen3.8-27B su Hexagon NPU
+title Server GenieX NPU (Porta 18181) - Hexagon NPU 80 TOPS (Phi-4 Mini, Qwen 8B, Qwen 27B)
 setlocal enabledelayedexpansion
 
 set GENIEX_BIN=%LOCALAPPDATA%\GenieX CLI\geniex.exe
@@ -18,14 +18,15 @@ if not exist "%GENIEX_BIN%" (
 
 echo =========================================================================
 echo  Avvio Server GenieX NPU su http://127.0.0.1:18181/v1
-echo  Acceleratore : Qualcomm Hexagon NPU (HTP0 fino a 80 TOPS) - Max Efficienza
+echo  Acceleratore : Qualcomm Hexagon NPU (HTP0 fino a 80 TOPS) - Max Efficienza (4W-8W)
 echo  Modelli NPU  : 
-echo    * 8B  : unsloth/Qwen3-8B-128K-GGUF:Q4_0 (~18 tok/s decode, ~837 tok/s prefill)
-echo    * 27B : IvanKrastevAdventics/Qwen3.8-27B-AWQ-INT4-Q4_0-GGUF:Q4_0 (~5 tok/s)
+echo    * 3.8B: unsloth/Phi-4-mini-instruct-GGUF (~18.1 tok/s decode, ~1.276 tok/s prefill)
+echo    * 8B  : unsloth/Qwen3-8B-128K-GGUF (~18-25 tok/s decode, ~837 tok/s prefill)
+echo    * 27B : IvanKrastevAdventics/Qwen3.8-27B-AWQ-INT4-Q4_0-GGUF (~5-8 tok/s)
 echo  Hardware     : Qualcomm Snapdragon X2 Elite Extreme (48GB UMA, 228 GB/s)
 echo =========================================================================
 echo.
 
-"%GENIEX_BIN%" serve -c npu --nctx 16384
+"%GENIEX_BIN%" serve -c npu --nctx 8192
 
 pause

@@ -40,6 +40,36 @@
       "contextWindow": 16384,
       "maxTokens": 2048,
       "temperature": 0.7
+    },
+    {
+      "id": "phi-4-mini-caveman",
+      "name": "Phi-4 Mini 3.8B (Caveman Fast - Reasoning)",
+      "baseUrl": "http://127.0.0.1:18182/v1",
+      "apiKey": "local",
+      "model": "Phi-4-mini-instruct-Adreno-GPU-caveman",
+      "contextWindow": 16384,
+      "maxTokens": 4096,
+      "temperature": 0.7
+    },
+    {
+      "id": "phi-4-mini-npu-direct",
+      "name": "Phi-4 Mini 3.8B Direct NPU (Hexagon 80 TOPS)",
+      "baseUrl": "http://127.0.0.1:18181/v1",
+      "apiKey": "local",
+      "model": "unsloth/Phi-4-mini-instruct-GGUF",
+      "contextWindow": 16384,
+      "maxTokens": 4096,
+      "temperature": 0.7
+    },
+    {
+      "id": "phi-4-mini-vulkan-direct",
+      "name": "Phi-4 Mini 3.8B Direct GPU (Vulkan 1.85 GHz)",
+      "baseUrl": "http://127.0.0.1:18187/v1",
+      "apiKey": "local",
+      "model": "Phi-4-mini-instruct-Adreno-GPU",
+      "contextWindow": 16384,
+      "maxTokens": 4096,
+      "temperature": 0.7
     }
   ]
 }

@@ -18,15 +18,15 @@ if %errorlevel% equ 0 (
     echo [INFO] Rilevato WSL2. Avvio di Open-WebUI in ambiente Linux...
     echo [INFO] I log del server verranno mostrati in questa finestra.
     echo.
-    wsl -d Ubuntu bash -c "export DATA_DIR=$HOME/.open-webui; export PORT=8080; export WEBUI_AUTH=False; export ENABLE_OPENAI_API=True; export ENABLE_OLLAMA_API=False; export OPENAI_API_BASE_URLS=\"http://127.0.0.1:18182/v1;http://127.0.0.1:18185/v1;http://127.0.0.1:18181/v1;http://127.0.0.1:18184/v1;http://127.0.0.1:18183/v1\"; export OPENAI_API_KEYS=\"none;none;none;none;none\"; if [ -f $HOME/open-webui-env/bin/open-webui ]; then exec $HOME/open-webui-env/bin/open-webui serve; elif [ -f $HOME/.local/bin/open-webui ]; then exec $HOME/.local/bin/open-webui serve; elif command -v open-webui >/dev/null 2>&1; then exec open-webui serve; else echo '[ERRORE] Open-WebUI non trovato in WSL Ubuntu.'; echo 'Installa con: pip install open-webui'; exit 1; fi"
+    wsl -d Ubuntu bash -c "export DATA_DIR=$HOME/.open-webui; export PORT=8080; export WEBUI_AUTH=False; export ENABLE_OPENAI_API=True; export ENABLE_OLLAMA_API=False; export OPENAI_API_BASE_URLS=\"http://127.0.0.1:18182/v1;http://127.0.0.1:18187/v1;http://127.0.0.1:18185/v1;http://127.0.0.1:18181/v1;http://127.0.0.1:18186/v1;http://127.0.0.1:18184/v1;http://127.0.0.1:18183/v1\"; export OPENAI_API_KEYS=\"none;none;none;none;none;none;none\"; if [ -f $HOME/open-webui-env/bin/open-webui ]; then exec $HOME/open-webui-env/bin/open-webui serve; elif [ -f $HOME/.local/bin/open-webui ]; then exec $HOME/.local/bin/open-webui serve; elif command -v open-webui >/dev/null 2>&1; then exec open-webui serve; else echo '[ERRORE] Open-WebUI non trovato in WSL Ubuntu.'; echo 'Installa con: pip install open-webui'; exit 1; fi"
     goto :end
 )
 
 where open-webui >nul 2>&1
 if %errorlevel% equ 0 (
     echo [INFO] Avvio Open-WebUI via eseguibile Windows...
-    set "OPENAI_API_BASE_URLS=http://127.0.0.1:18182/v1;http://127.0.0.1:18185/v1;http://127.0.0.1:18181/v1;http://127.0.0.1:18184/v1;http://127.0.0.1:18183/v1"
-    set "OPENAI_API_KEYS=none;none;none;none;none"
+    set "OPENAI_API_BASE_URLS=http://127.0.0.1:18182/v1;http://127.0.0.1:18187/v1;http://127.0.0.1:18185/v1;http://127.0.0.1:18181/v1;http://127.0.0.1:18186/v1;http://127.0.0.1:18184/v1;http://127.0.0.1:18183/v1"
+    set "OPENAI_API_KEYS=none;none;none;none;none;none;none"
     set "ENABLE_OLLAMA_API=False"
     open-webui serve --port 8080
     goto :end
@@ -35,8 +35,8 @@ if %errorlevel% equ 0 (
 where python >nul 2>&1
 if %errorlevel% equ 0 (
     echo [INFO] Tentativo di avvio Open-WebUI via Python locale...
-    set "OPENAI_API_BASE_URLS=http://127.0.0.1:18182/v1;http://127.0.0.1:18185/v1;http://127.0.0.1:18181/v1;http://127.0.0.1:18184/v1;http://127.0.0.1:18183/v1"
-    set "OPENAI_API_KEYS=none;none;none;none;none"
+    set "OPENAI_API_BASE_URLS=http://127.0.0.1:18182/v1;http://127.0.0.1:18187/v1;http://127.0.0.1:18185/v1;http://127.0.0.1:18181/v1;http://127.0.0.1:18186/v1;http://127.0.0.1:18184/v1;http://127.0.0.1:18183/v1"
+    set "OPENAI_API_KEYS=none;none;none;none;none;none;none"
     set "ENABLE_OLLAMA_API=False"
     python -m open_webui serve --port 8080
     if %errorlevel% neq 0 (

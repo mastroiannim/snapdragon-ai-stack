@@ -257,6 +257,18 @@ $ModelChecks = @(
         Patterns = @("Muse-Glimmer-30B-Q4_K_M.gguf", "*Muse-Glimmer*.gguf")
         SubDir = "Muse-Glimmer-30B"
         DownloadHint = "Muse-Glimmer-30B-Q4_K_M.gguf"
+    },
+    @{
+        Name = "Gemma-4-31B (GPU Coding & Reasoning)"
+        Patterns = @("gemma-4-31b-it-qat-q4_0.gguf", "*gemma-4-31b*.gguf")
+        SubDir = "Gemma-4-31B"
+        DownloadHint = "google/gemma-4-31B-it-qat-q4_0-gguf"
+    },
+    @{
+        Name = "Phi-4-Mini-Instruct (Qualcomm AI Hub / GPU)"
+        Patterns = @("Phi-4-mini-instruct*.gguf", "*phi-4-mini*.gguf", "Phi-4-mini-instruct-Q4_K_M.gguf", "Phi-4-mini-instruct-Q4_0.gguf")
+        SubDir = "Phi-4-mini-instruct"
+        DownloadHint = "unsloth/Phi-4-mini-instruct-GGUF (https://aihub.qualcomm.com/models/phi_4_mini_instruct)"
     }
 )
 
@@ -361,9 +373,12 @@ Write-Host "  0. 0_Setup_Onboarding.cmd           -> Riesegui verifica & configu
 Write-Host "  1. 2_Server_GenieX_NPU.cmd          -> Server NPU Hexagon 80 TOPS (Porta 18181)" -ForegroundColor White
 Write-Host "  2. 4_Server_Qwen8B_GPU.cmd          -> Server GPU Adreno Vulkan Qwen3-8B (Porta 18185)" -ForegroundColor White
 Write-Host "  3. 5_Server_Qwen27B_GPU.cmd         -> Server GPU Adreno Vulkan Qwen3.8-27B (Porta 18184)" -ForegroundColor White
-Write-Host "  4. 6_Proxy_Compressore_OpenClaw.cmd -> Caveman Fast Proxy con compressione prompt (Porta 18182)" -ForegroundColor White
-Write-Host "  5. 1_Avvia_Dashboard_WebUI.cmd      -> Dashboard Chat Open-WebUI (Porta 8080)" -ForegroundColor White
-Write-Host "  6. Stop_Tutti_I_Server.cmd          -> Termina tutti i processi e libera memoria" -ForegroundColor White
+Write-Host "  4. 7_Server_Gemma31B_GPU.cmd        -> Server GPU Adreno Vulkan Gemma 4 31B (Porta 18186)" -ForegroundColor White
+Write-Host "  5. 8_Server_Phi4Mini_GPU.cmd        -> Server GPU Adreno Vulkan Phi-4 Mini (Porta 18187)" -ForegroundColor White
+Write-Host "  6. 3_Server_MuseGlimmer_30B_Vision.cmd -> Server Vision Multimodale (Porta 18183)" -ForegroundColor White
+Write-Host "  7. 6_Proxy_Compressore_OpenClaw.cmd -> Caveman Fast Proxy con compressione prompt (Porta 18182)" -ForegroundColor White
+Write-Host "  8. 1_Avvia_Dashboard_WebUI.cmd      -> Dashboard Chat Open-WebUI (Porta 8080)" -ForegroundColor White
+Write-Host "  9. Stop_Tutti_I_Server.cmd          -> Termina tutti i processi e libera memoria" -ForegroundColor White
 Write-Host ""
 Write-Host "=========================================================================" -ForegroundColor Cyan
 Write-Host " Verifica completata! Per iniziare, esegui un server o il proxy." -ForegroundColor Green

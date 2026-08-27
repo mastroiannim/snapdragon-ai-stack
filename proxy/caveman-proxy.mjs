@@ -23,6 +23,8 @@ const server = http.createServer((req, res) => {
   if (req.method === 'GET' && (url.pathname === '/v1/models' || url.pathname === '/models')) {
     const endpoints = [
       { name: 'NPU', url: 'http://127.0.0.1:18181' },
+      { name: 'GPU-Phi4', url: 'http://127.0.0.1:18187' },
+      { name: 'GPU-Gemma31B', url: 'http://127.0.0.1:18186' },
       { name: 'GPU-27B', url: 'http://127.0.0.1:18184' },
       { name: 'GPU-8B', url: 'http://127.0.0.1:18185' },
       { name: 'Vision', url: 'http://127.0.0.1:18183' }
@@ -64,20 +66,46 @@ const server = http.createServer((req, res) => {
         const payload = JSON.parse(body);
         const requestedModel = payload.model || '';
 
-        // Strip -caveman suffix if WebUI sent it
-        if (payload.model && payload.model.endsWith('-caveman')) {
-          payload.model = payload.model.replace('-caveman', '');
-        }
+        // Case-insensitive strip of -caveman suffix and any wrapper tags
+        let cleanModel = (payload.model || '').replace(/-caveman/gi, '').replace(/\(caveman\s*fast\)/gi, '').trim();
 
         // Determine target server based on model requested
         let currentTarget = UPSTREAM_URL; // Defaults to GenieX NPU (18181)
-        if (payload.model && payload.model.includes('8B') && payload.model.includes('GPU')) {
+        const lowerModel = cleanModel.toLowerCase();
+
+        if (lowerModel.includes('gpu-phi4') || (lowerModel.includes('phi') && lowerModel.includes('gpu'))) {
+          currentTarget = 'http://127.0.0.1:18187';
+          cleanModel = 'Phi-4-mini-instruct-Adreno-GPU';
+        } else if (lowerModel.includes('phi-4') || lowerModel.includes('phi4')) {
+          currentTarget = 'http://127.0.0.1:18181';
+          if (!cleanModel.includes('/') && !cleanModel.includes(':')) {
+            cleanModel = 'unsloth/Phi-4-mini-instruct-GGUF:Q4_K_M';
+          }
+        } else if (lowerModel.includes('gemma') || lowerModel.includes('31b')) {
+          currentTarget = 'http://127.0.0.1:18186';
+          cleanModel = 'Gemma-4-31B-Adreno-GPU';
+        } else if (lowerModel.includes('8b') && lowerModel.includes('gpu')) {
           currentTarget = 'http://127.0.0.1:18185';
-        } else if (payload.model && payload.model.includes('GPU')) {
+          cleanModel = 'Qwen3-8B-Adreno-GPU';
+        } else if (lowerModel.includes('27b') && lowerModel.includes('gpu')) {
           currentTarget = 'http://127.0.0.1:18184';
-        } else if (payload.model && payload.model.includes('Muse')) {
+          cleanModel = 'Qwen3.8-27B-Adreno-GPU';
+        } else if (lowerModel.includes('muse') || lowerModel.includes('vision')) {
           currentTarget = 'http://127.0.0.1:18183';
+          cleanModel = 'Muse-Glimmer-30B-Vision-GPU';
+        } else if (lowerModel.includes('8b') || lowerModel.includes('qwen3-8b')) {
+          currentTarget = 'http://127.0.0.1:18181';
+          if (!cleanModel.includes('/') && !cleanModel.includes(':')) {
+            cleanModel = 'unsloth/Qwen3-8B-128K-GGUF:Q4_0';
+          }
+        } else if (lowerModel.includes('27b') || lowerModel.includes('qwen3.8-27b')) {
+          currentTarget = 'http://127.0.0.1:18181';
+          if (!cleanModel.includes('/') && !cleanModel.includes(':')) {
+            cleanModel = 'IvanKrastevAdventics/Qwen3.8-27B-AWQ-INT4-Q4_0-GGUF:Q4_0';
+          }
         }
+
+        payload.model = cleanModel;
 
         // ULTRA PROMPT COMPRESSION: Strip the 3,000-token system prompt and replace with slim prompt
         if (Array.isArray(payload.messages)) {
@@ -95,6 +123,8 @@ const server = http.createServer((req, res) => {
 
         const fallbackEndpoints = [
           currentTarget,
+          'http://127.0.0.1:18187',
+          'http://127.0.0.1:18186',
           'http://127.0.0.1:18184',
           'http://127.0.0.1:18185',
           'http://127.0.0.1:18181',
@@ -255,6 +285,6 @@ server.listen(PROXY_PORT, '127.0.0.1', () => {
   console.log(`================================================================`);
   console.log(`⚡ Prompt Compressor Proxy running on http://127.0.0.1:${PROXY_PORT}`);
   console.log(`   - Compresses 3,000+ token OpenClaw prompts down to ~40 tokens`);
-  console.log(`   - Routes to GenieX NPU (18181) e GPU (18184/18185/18183)`);
+  console.log(`   - Routes to GenieX NPU (18181) e GPU (18187/18186/18184/18185/18183)`);
   console.log(`================================================================`);
 });

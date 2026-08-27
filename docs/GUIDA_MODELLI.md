@@ -42,6 +42,19 @@ i modelli AI, i server locali e le dashboard su Snapdragon? X2 Elite Extreme X2E
                  * Scrittura  : ~24 - 35 tok/s (Scrittura fluida a schermo)
                  * Scelta ideale per risposte fulminee e chat veloci
 
+[Porta 18186] -> Gemma 4 31B GPU (Qualcomm Adreno X2-90 Vulkan Nativo)
+                 * ID Modello : Gemma-4-31B-Adreno-GPU
+                 * Ingestione : ~260 tok/s
+                 * Generazione: ~6 - 9 tok/s (Limite teorico banda 228 GB/s = 12.3 tok/s)
+                 * Modello QAT (Quantization-Aware Training) per massima precisione in 4-bit
+
+[Porta 18187] -> Phi-4-Mini-Instruct GPU (Qualcomm Adreno X2-90 Vulkan Nativo / AI Hub)
+                 * ID Modello : Phi-4-mini-instruct-Adreno-GPU
+                 * Sorgente   : Microsoft / Qualcomm AI Hub (aihub.qualcomm.com/models/phi_4_mini_instruct)
+                 * Ingestione : ~450 tok/s su GPU (>1.200 tok/s su NPU 80 TOPS)
+                 * Generazione: ~45 - 65 tok/s (Fluido, Istantaneo)
+                 * Uso        : Logica Matematica, Reasoning Veloce, Assistente Coding Compatto
+
 [Porta 8080]  -> Open-WebUI Dashboard
                  * Interfaccia chat unificata nel browser (http://localhost:8080)
 
@@ -70,6 +83,17 @@ Formula del limite teorico:
    - Limite autoregressivo   : 228 GB/s / 18.5 GB = 12.3 tok/s teorici (~7 tok/s reale)
    - Con Speculative DFlash  : ~14 - 20 tok/s effettivi (elaborazione multi-token per fetch)
 
+4. MODELLO GEMMA 4 31B (Q4_0 - 18.5 GiB in RAM):
+   - Limite teorico assoluto : 228 GB/s / 18.5 GB = 12.3 tok/s
+   - Efficienza reale (50-70%): ~6 - 9 tok/s su GPU Vulkan
+   - Prefill (Compute-bound) : ~260 tok/s su GPU Vulkan (grazie all'ottimizzazione degli shader)
+
+5. MODELLO PHI-4-MINI-INSTRUCT (Q4_K_M / Q4_0 - 2.4 GiB in RAM):
+   - Limite teorico assoluto : 228 GB/s / 2.4 GB = 95.0 tok/s
+   - Benchmark Ufficiale AI Hub su NPU : 1.276 tok/s Prefill • 18.1 tok/s Decode (HTP 80 TOPS)
+   - Prestazioni su Adreno GPU Vulkan  : ~45 - 65 tok/s Decode • ~450 tok/s Prefill
+   - Caratteristiche                   : Modello compatto da 3.8B (Microsoft / Qualcomm AI Hub) con altissimi punteggi in ragionamento, logica matematica e coding compatto.
+
 --------------------------------------------------------------------------------
 3. ELENCO DEGLI SCRIPT DI AVVIO
 --------------------------------------------------------------------------------
@@ -92,7 +116,13 @@ Formula del limite teorico:
 [6] 6_Proxy_Compressore_OpenClaw.cmd
     -> Avvia il proxy intelligente su porta 18182 che accelera OpenClaw e Open-WebUI.
 
-[7] Stop_Tutti_I_Server.cmd
+[7] 7_Server_Gemma31B_GPU.cmd
+    -> Avvia Gemma 4 31B su porta 18186 con GPU Adreno Vulkan (ragionamento avanzato e coding).
+
+[8] 8_Server_Phi4Mini_GPU.cmd
+    -> Avvia Phi-4-Mini-Instruct su porta 18187 con GPU Adreno Vulkan (ragionamento veloce ~45-65 tok/s).
+
+[9] Stop_Tutti_I_Server.cmd
     -> Chiude tutti i processi (GenieX, llama-server, Proxy Node) con un clic,
        liberando istantaneamente RAM, VRAM e NPU.
 
@@ -101,13 +131,15 @@ Formula del limite teorico:
 --------------------------------------------------------------------------------
 
 1. Avvia lo script desiderato:
-   - Per Coding Complesso : 5_Server_Qwen27B_GPU.cmd (Porta 18184)
-   - Per Velocita Estrema : 4_Server_Qwen8B_GPU.cmd   (Porta 18185)
+   - Per Reasoning Veloce e Coding Leggero : 8_Server_Phi4Mini_GPU.cmd (Porta 18187)
+   - Per Ragionamento e Coding Avanzato   : 7_Server_Gemma31B_GPU.cmd (Porta 18186)
+   - Per Coding Complesso                 : 5_Server_Qwen27B_GPU.cmd (Porta 18184)
+   - Per Velocita Estrema                 : 4_Server_Qwen8B_GPU.cmd   (Porta 18185)
 
 2. In VSCode apri le Impostazioni di Cline (icona ingranaggio).
 3. Imposta i parametri:
    - API Provider : OpenAI Compatible
-   - Base URL     : http://127.0.0.1:18184/v1 (o 18185/v1 per 8B)
+   - Base URL     : http://127.0.0.1:18187/v1 (o 18186/v1, 18184/v1, 18185/v1)
    - API Key      : local
-   - Model ID     : Qwen3.8-27B-Adreno-GPU (o Qwen3-8B-Adreno-GPU)
+   - Model ID     : Phi-4-mini-instruct-Adreno-GPU (o Gemma-4-31B-Adreno-GPU / Qwen3.8-27B-Adreno-GPU / Qwen3-8B-Adreno-GPU)
 ================================================================================

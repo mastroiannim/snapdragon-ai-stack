@@ -10,7 +10,13 @@ echo =========================================================================
 echo  Avvio Caveman Fast Proxy su http://127.0.0.1:18182/v1
 echo  Funzione     : Compressione System Prompt (da 3.400+ a ~40 token, -98.8%)
 echo  Features     : Anti-tag reasoning, TTFT quasi azzerato (0.05s)
-echo  Routing      : Invia a NPU (18181), GPU-27B (18184), GPU-8B (18185) e Vision (18183)
+echo  Routing      : 
+echo    * NPU (18181)       -> Hexagon NPU (Phi-4 Mini 3.8B, Qwen 8B, Qwen 27B)
+echo    * GPU-Phi4 (18187)  -> Adreno GPU (Phi-4 Mini 3.8B Vulkan, ~45-65 tok/s)
+echo    * GPU-Gemma (18186) -> Adreno GPU (Gemma 4 31B Vulkan, ~6-9 tok/s)
+echo    * GPU-8B (18185)    -> Adreno GPU (Qwen3 8B Vulkan, ~24-35 tok/s)
+echo    * GPU-27B (18184)   -> Adreno GPU (Qwen3.8 27B Vulkan, ~8-12 tok/s)
+echo    * Vision (18183)    -> Adreno GPU (Muse Glimmer 30B Multimodale)
 echo =========================================================================
 echo.
 

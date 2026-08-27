@@ -38,8 +38,10 @@
 | Porta | Servizio | Hardware | Scopo Consigliato |
 | :--- | :--- | :--- | :--- |
 | **18182** | 6_Proxy_Compressore_OpenClaw.cmd | Node.js Middleware | **Tutti i client (OpenClaw, WebUI, TTFT azzerato)** |
-| **18181** | 2_Server_GenieX_NPU.cmd | Hexagon NPU (80 TOPS) | Grandi contesti, Coding RAG, Batteria |
+| **18181** | 2_Server_GenieX_NPU.cmd | Hexagon NPU (80 TOPS) | Grandi contesti, Coding RAG, Batteria (Phi-4, Qwen) |
+| **18187** | 8_Server_Phi4Mini_GPU.cmd | Adreno GPU (Vulkan 1.85 GHz) | Reasoning veloce, logica matematica, coding compatto (~45–65 tok/s) |
 | **18185** | 4_Server_Qwen8B_GPU.cmd | Adreno GPU (Vulkan 1.85 GHz) | Chat rapida, scrittura istantanea (~35 tok/s) |
+| **18186** | 7_Server_Gemma31B_GPU.cmd | Adreno GPU (Vulkan 1.85 GHz) | Reasoning avanzato e coding multi-step (~6–9 tok/s) |
 | **18184** | 5_Server_Qwen27B_GPU.cmd | Adreno GPU (Vulkan 1.85 GHz) | Coding complesso in VSCode Cline (~12 tok/s) |
 | **18183** | 3_Server_MuseGlimmer_30B_Vision.cmd | Adreno GPU (Vulkan + DFlash) | Visione multimodale (analisi immagini) |
 | **8080** | 1_Avvia_Dashboard_WebUI.cmd | Browser Web | Interfaccia grafica unificata |
@@ -101,7 +103,7 @@ Scarica i modelli quantizzati ottimizzati per l'architettura Snapdragon:
 ### 4. Avvia i Server e Inizia a Chattare
 Dalla cartella `launchers/` puoi avviare con un doppio clic:
 1. `0_Setup_Onboarding.cmd` (per diagnosticare e verificare l'intero stack).
-2. `2_Server_GenieX_NPU.cmd` (per NPU 80 TOPS) oppure `4_Server_Qwen8B_GPU.cmd` (per GPU Vulkan).
+2. `8_Server_Phi4Mini_GPU.cmd` (per Phi-4 Mini su GPU Vulkan ~45–65 tok/s) oppure `2_Server_GenieX_NPU.cmd` (per NPU 80 TOPS).
 3. `6_Proxy_Compressore_OpenClaw.cmd` (per azzerare il TTFT e comprimere i prompt).
 4. `1_Avvia_Dashboard_WebUI.cmd` (per aprire l'interfaccia nel browser su http://localhost:8080).
 
