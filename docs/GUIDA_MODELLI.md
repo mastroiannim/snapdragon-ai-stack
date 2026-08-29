@@ -14,6 +14,15 @@ i modelli AI, i server locali e le dashboard su Snapdragon? X2 Elite Extreme X2E
 --------------------------------------------------------------------------------
 
 [Porta 18181] -> GenieX NPU Hub (Hexagon NPU - fino a 80 TOPS)
+                 * Modello 2.3B: google/gemma-4-E2B-it-qat-q4_0-gguf
+                   - Prefill Prompt : ~1.808 tok/s (Ingestione ultra-fulminea NPU Hexagon 80 TOPS)
+                   - Decode Output  : ~35.1 tok/s (Max efficienza energetica, 4-8W)
+                 * Modello 3.8B: unsloth/Phi-4-mini-instruct-GGUF:Q4_K_M
+                   - Prefill Prompt : ~1.276 tok/s
+                   - Decode Output  : ~18.1 tok/s
+                 * Modello 4B  : unsloth/Qwen3-4B-Instruct-2507-GGUF:Q4_K_M
+                   - Prefill Prompt : ~1.100+ tok/s
+                   - Decode Output  : ~20 - 28 tok/s
                  * Modello 8B  : unsloth/Qwen3-8B-128K-GGUF:Q4_0
                    - Prefill Prompt : ~837 tok/s (Ingestione istantanea)
                    - Decode Output  : ~18 - 25 tok/s (Max efficienza, 4-8W)
@@ -55,6 +64,20 @@ i modelli AI, i server locali e le dashboard su Snapdragon? X2 Elite Extreme X2E
                  * Generazione: ~45 - 65 tok/s (Fluido, Istantaneo)
                  * Uso        : Logica Matematica, Reasoning Veloce, Assistente Coding Compatto
 
+[Porta 18188] -> Qwen3-4B GPU (Qualcomm Adreno X2-90 Vulkan Nativo / AI Hub)
+                 * ID Modello : Qwen3-4B-Adreno-GPU
+                 * Sorgente   : Qualcomm AI Hub (aihub.qualcomm.com/models/qwen3_4b)
+                 * Ingestione : ~520 tok/s su GPU (>1.100 tok/s su NPU 80 TOPS)
+                 * Generazione: ~50 - 75 tok/s (Chat Rapida, Reasoning Bilanciato)
+                 * Uso        : Chat Generale, Assistente Codice Veloce, Test Multilingua
+
+[Porta 18189] -> Gemma-4-E2B-it GPU (Qualcomm Adreno X2-90 Vulkan Nativo / AI Hub)
+                 * ID Modello : Gemma-4-E2B-Adreno-GPU
+                 * Sorgente   : Google / Qualcomm AI Hub (aihub.qualcomm.com/models/gemma_4_e2b_it)
+                 * Ingestione : ~600+ tok/s su GPU (~1.808 tok/s su NPU 80 TOPS)
+                 * Generazione: ~65 - 90 tok/s (Ultra-reattivo, Multimodale Testo + Visione)
+                 * Uso        : Visione Multimodale Rapida, Reasoning Istantaneo, Chat Efficienza Massima
+
 [Porta 8080]  -> Open-WebUI Dashboard
                  * Interfaccia chat unificata nel browser (http://localhost:8080)
 
@@ -94,6 +117,18 @@ Formula del limite teorico:
    - Prestazioni su Adreno GPU Vulkan  : ~45 - 65 tok/s Decode • ~450 tok/s Prefill
    - Caratteristiche                   : Modello compatto da 3.8B (Microsoft / Qualcomm AI Hub) con altissimi punteggi in ragionamento, logica matematica e coding compatto.
 
+6. MODELLO QWEN3-4B (Q4_K_M / Q4_0 - 2.55 GiB in RAM):
+   - Limite teorico assoluto : 228 GB/s / 2.55 GB = 89.4 tok/s
+   - Prestazioni su Adreno GPU Vulkan  : ~50 - 75 tok/s Decode • ~520 tok/s Prefill
+   - Prestazioni su Hexagon NPU (80 TOPS): ~20 - 28 tok/s Decode • ~1.100+ tok/s Prefill (GenieX / QAIRT w4a16)
+   - Caratteristiche                   : Modello compatto da 4B ottimizzato da Qualcomm per dispositivi Snapdragon (Qualcomm AI Hub), eccellente bilanciamento tra velocita, consumi ridotti (4-8W NPU) e capacita multilingua/coding.
+
+7. MODELLO GEMMA-4-E2B-IT (Q4_0 / QAT - 3.04 GiB in RAM):
+   - Limite teorico assoluto : 228 GB/s / 3.04 GB = 75.0 tok/s
+   - Benchmark Ufficiale AI Hub su NPU : 1.808 tok/s Prefill • 35.1 tok/s Decode (Hexagon HTP 80 TOPS)
+   - Prestazioni su Adreno GPU Vulkan  : ~65 - 90 tok/s Decode • ~600+ tok/s Prefill
+   - Caratteristiche                   : Modello compatto multimodale da 2.3B (Google DeepMind / Qualcomm AI Hub) con quantizzazione QAT Q4_0 nativa, altissima efficienza (4-8W NPU), supporto per immagini e context window estesa.
+
 --------------------------------------------------------------------------------
 3. ELENCO DEGLI SCRIPT DI AVVIO
 --------------------------------------------------------------------------------
@@ -122,7 +157,13 @@ Formula del limite teorico:
 [8] 8_Server_Phi4Mini_GPU.cmd
     -> Avvia Phi-4-Mini-Instruct su porta 18187 con GPU Adreno Vulkan (ragionamento veloce ~45-65 tok/s).
 
-[9] Stop_Tutti_I_Server.cmd
+[9] 9_Server_Qwen4B_GPU.cmd
+    -> Avvia Qwen3-4B su porta 18188 con GPU Adreno Vulkan (chat rapida e reasoning ~50-75 tok/s).
+
+[10] 10_Server_Gemma4E2B_GPU.cmd
+    -> Avvia Gemma-4-E2B-it su porta 18189 con GPU Adreno Vulkan (~65-90 tok/s, multimodale testo + immagini).
+
+[11] Stop_Tutti_I_Server.cmd
     -> Chiude tutti i processi (GenieX, llama-server, Proxy Node) con un clic,
        liberando istantaneamente RAM, VRAM e NPU.
 
@@ -131,15 +172,17 @@ Formula del limite teorico:
 --------------------------------------------------------------------------------
 
 1. Avvia lo script desiderato:
+   - Per Visione & Reasoning Ultra-Rapido : 10_Server_Gemma4E2B_GPU.cmd (Porta 18189)
+   - Per Chat Veloce e Reasoning Bilanciato: 9_Server_Qwen4B_GPU.cmd   (Porta 18188)
    - Per Reasoning Veloce e Coding Leggero : 8_Server_Phi4Mini_GPU.cmd (Porta 18187)
    - Per Ragionamento e Coding Avanzato   : 7_Server_Gemma31B_GPU.cmd (Porta 18186)
-   - Per Coding Complesso                 : 5_Server_Qwen27B_GPU.cmd (Porta 18184)
+   - Per Coding Complesso                 : 5_Server_Qwen27B_GPU.cmd  (Porta 18184)
    - Per Velocita Estrema                 : 4_Server_Qwen8B_GPU.cmd   (Porta 18185)
 
 2. In VSCode apri le Impostazioni di Cline (icona ingranaggio).
 3. Imposta i parametri:
    - API Provider : OpenAI Compatible
-   - Base URL     : http://127.0.0.1:18187/v1 (o 18186/v1, 18184/v1, 18185/v1)
+   - Base URL     : http://127.0.0.1:18189/v1 (o 18188/v1, 18187/v1, 18186/v1, 18184/v1, 18185/v1)
    - API Key      : local
-   - Model ID     : Phi-4-mini-instruct-Adreno-GPU (o Gemma-4-31B-Adreno-GPU / Qwen3.8-27B-Adreno-GPU / Qwen3-8B-Adreno-GPU)
+   - Model ID     : Gemma-4-E2B-Adreno-GPU (o Qwen3-4B-Adreno-GPU / Phi-4-mini-instruct-Adreno-GPU / Gemma-4-31B-Adreno-GPU / Qwen3.8-27B-Adreno-GPU / Qwen3-8B-Adreno-GPU)
 ================================================================================

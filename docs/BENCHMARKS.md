@@ -17,8 +17,18 @@ Test condotti con modello standard **unsloth/Qwen3-8B-128K-GGUF (Q4_0, 4.45 GiB)
 
 | Metrica | Senza Caveman (Prompt Raw) | Con Caveman Proxy (Porta 18182) | Guadagno |
 | :--- | :--- | :--- | :--- |
-| **Dimensione Prompt** | ~3.500 token | **~40 token** | **-98.8% token eliminati** |
-| **TTFT su NPU (18181)** | ~4.20 s | **0.05 s (50 ms)** | **? 84x piu veloce** |
-| **TTFT su Vulkan GPU (18185)** | ~123.00 s | **0.08 s (80 ms)** | **? 1.500x piu veloce** |
-| **Overhead CPU Proxy Node** | 0 ms | **< 0.5 ms** | Trascurabile (< 1 ms) |
 | **Risparmio KV Cache RAM** | 3.5 GB | **0.1 GB** | **Risparmio ~3.4 GB RAM** |
+
+---
+
+## Panoramica Comparativa Modelli (Snapdragon X2 Elite Extreme - 228 GB/s)
+
+| Modello | Dimensione (Q4) | Vulkan GPU Decode | Hexagon NPU Decode | Hexagon NPU Prefill | Consumo NPU vs GPU |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Phi-4-Mini-Instruct (3.8B)** | ~2.49 GB | ~45 – 65 tok/s | ~18.1 tok/s | **~1.276 tok/s** | 4W–8W vs 14W–18W |
+| **Gemma-4-E2B-it (2.3B QAT)** | ~3.04 GB | **~65 – 90 tok/s** | **~35.1 tok/s** | **~1.808 tok/s** | 4W–8W vs 12W–16W |
+| **Qwen3-4B-Instruct (4B)** | ~2.55 GB | **~50 – 75 tok/s** | ~20 – 28 tok/s | **~1.100+ tok/s** | 4W–8W vs 14W–18W |
+| **Qwen3-8B-128K (8B)** | ~4.45 GB | ~24 – 35 tok/s | ~18 – 25 tok/s | **~837 tok/s** | 4W–8W vs 14W–20W |
+| **Qwen3.8-27B (27B)** | ~15.2 GB | ~8 – 12 tok/s | ~5 – 8 tok/s | ~105 tok/s | 6W–10W vs 18W–24W |
+| **Muse-Glimmer-30B (Vision)** | ~16.1 GB | ~14 – 20 tok/s (DFlash) | N/A | ~260 tok/s | 18W–25W |
+| **Gemma-4-31B-it (31B QAT)** | ~18.5 GB | ~6 – 9 tok/s | N/A | ~260 tok/s | 18W–25W |

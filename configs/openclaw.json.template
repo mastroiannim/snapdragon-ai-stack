@@ -1,75 +1,378 @@
 {
-  "activeModel": "qwen3-8b-caveman",
-  "models": [
-    {
-      "id": "qwen3-8b-caveman",
-      "name": "Qwen3 8B (Caveman Fast - NPU/GPU)",
-      "baseUrl": "http://127.0.0.1:18182/v1",
-      "apiKey": "local",
-      "model": "unsloth/Qwen3-8B-128K-GGUF:Q4_0-caveman",
-      "contextWindow": 16384,
-      "maxTokens": 2048,
-      "temperature": 0.7
-    },
-    {
-      "id": "qwen3.8-27b-caveman",
-      "name": "Qwen3.8 27B (Caveman Fast - Coding)",
-      "baseUrl": "http://127.0.0.1:18182/v1",
-      "apiKey": "local",
-      "model": "Qwen3.8-27B-Adreno-GPU-caveman",
-      "contextWindow": 16384,
-      "maxTokens": 4096,
-      "temperature": 0.6
-    },
-    {
-      "id": "qwen3-8b-npu-direct",
-      "name": "Qwen3 8B Direct NPU (Hexagon 80 TOPS)",
-      "baseUrl": "http://127.0.0.1:18181/v1",
-      "apiKey": "local",
-      "model": "unsloth/Qwen3-8B-128K-GGUF:Q4_0",
-      "contextWindow": 16384,
-      "maxTokens": 2048,
-      "temperature": 0.7
-    },
-    {
-      "id": "qwen3-8b-vulkan-direct",
-      "name": "Qwen3 8B Direct GPU (Vulkan 1.85 GHz)",
-      "baseUrl": "http://127.0.0.1:18185/v1",
-      "apiKey": "local",
-      "model": "Qwen3-8B-Adreno-GPU",
-      "contextWindow": 16384,
-      "maxTokens": 2048,
-      "temperature": 0.7
-    },
-    {
-      "id": "phi-4-mini-caveman",
-      "name": "Phi-4 Mini 3.8B (Caveman Fast - Reasoning)",
-      "baseUrl": "http://127.0.0.1:18182/v1",
-      "apiKey": "local",
-      "model": "Phi-4-mini-instruct-Adreno-GPU-caveman",
-      "contextWindow": 16384,
-      "maxTokens": 4096,
-      "temperature": 0.7
-    },
-    {
-      "id": "phi-4-mini-npu-direct",
-      "name": "Phi-4 Mini 3.8B Direct NPU (Hexagon 80 TOPS)",
-      "baseUrl": "http://127.0.0.1:18181/v1",
-      "apiKey": "local",
-      "model": "unsloth/Phi-4-mini-instruct-GGUF",
-      "contextWindow": 16384,
-      "maxTokens": 4096,
-      "temperature": 0.7
-    },
-    {
-      "id": "phi-4-mini-vulkan-direct",
-      "name": "Phi-4 Mini 3.8B Direct GPU (Vulkan 1.85 GHz)",
-      "baseUrl": "http://127.0.0.1:18187/v1",
-      "apiKey": "local",
-      "model": "Phi-4-mini-instruct-Adreno-GPU",
-      "contextWindow": 16384,
-      "maxTokens": 4096,
-      "temperature": 0.7
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "custom-caveman-18182/unsloth/Phi-4-mini-instruct-GGUF"
+      },
+      "models": {
+        "custom-caveman-18182/unsloth/Phi-4-mini-instruct-GGUF": {
+          "alias": "caveman-phi4"
+        },
+        "custom-caveman-18182/Phi-4-mini-instruct-Adreno-GPU": {
+          "alias": "caveman-phi4-gpu"
+        },
+        "custom-127-0-0-1-18181/unsloth/Phi-4-mini-instruct-GGUF:Q4_K_M": {
+          "alias": "phi4-npu"
+        },
+        "custom-phi4mini-18187/Phi-4-mini-instruct-Adreno-GPU": {
+          "alias": "phi4-gpu"
+        },
+        "custom-caveman-18182/Gemma-4-31B-Adreno-GPU": {
+          "alias": "caveman-gemma"
+        },
+        "custom-gemma31b-18186/Gemma-4-31B-Adreno-GPU": {
+          "alias": "gemma-gpu"
+        },
+        "custom-caveman-18182/IvanKrastevAdventics/Qwen3.8-27B-AWQ-INT4-Q4_0-GGUF": {
+          "alias": "caveman-27b"
+        },
+        "custom-caveman-18182/unsloth/Qwen3-8B-128K-GGUF": {
+          "alias": "caveman-8b"
+        },
+        "custom-caveman-18182/unsloth/Qwen3-4B-Instruct-2507-GGUF": {
+          "alias": "caveman-4b"
+        },
+        "custom-caveman-18182/Qwen3-4B-Adreno-GPU": {
+          "alias": "caveman-4b-gpu"
+        },
+        "custom-caveman-18182/Qwen3-8B-Adreno-GPU": {
+          "alias": "caveman-8b-gpu"
+        },
+        "custom-caveman-18182/Qwen3.8-27B-Adreno-GPU": {
+          "alias": "caveman-27b-gpu"
+        },
+        "custom-127-0-0-1-18181/unsloth/Qwen3-4B-Instruct-2507-GGUF:Q4_K_M": {
+          "alias": "qwen4b-npu"
+        },
+        "custom-127-0-0-1-18181/unsloth/Qwen3-8B-128K-GGUF:Q4_0": {
+          "alias": "qwen8b-npu"
+        },
+        "custom-127-0-0-1-18181/IvanKrastevAdventics/Qwen3.8-27B-AWQ-INT4-Q4_0-GGUF:Q4_0": {
+          "alias": "qwen27b-npu"
+        },
+        "custom-qwen27b-18184/Qwen3.8-27B-Adreno-GPU": {
+          "alias": "qwen27b-gpu"
+        },
+        "custom-qwen8b-18185/Qwen3-8B-Adreno-GPU": {
+          "alias": "qwen8b-gpu"
+        },
+        "custom-qwen4b-18188/Qwen3-4B-Adreno-GPU": {
+          "alias": "qwen4b-gpu"
+        },
+        "custom-caveman-18182/google/gemma-4-E2B-it-qat-q4_0-gguf": {
+          "alias": "caveman-gemma4e2b"
+        },
+        "custom-caveman-18182/Gemma-4-E2B-Adreno-GPU": {
+          "alias": "caveman-gemma4e2b-gpu"
+        },
+        "custom-127-0-0-1-18181/google/gemma-4-E2B-it-qat-q4_0-gguf:Q4_0": {
+          "alias": "gemma4e2b-npu"
+        },
+        "custom-gemma4e2b-18189/Gemma-4-E2B-Adreno-GPU": {
+          "alias": "gemma4e2b-gpu"
+        },
+        "custom-muse-18183/Muse-Glimmer-30B-Vision-GPU": {
+          "alias": "muse"
+        }
+      }
     }
-  ]
+  },
+  "models": {
+    "mode": "merge",
+    "providers": {
+      "custom-caveman-18182": {
+        "baseUrl": "http://127.0.0.1:18182/v1",
+        "apiKey": "local-caveman",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "unsloth/Phi-4-mini-instruct-GGUF",
+            "name": "⚡ Phi-4-Mini 3.8B (NPU Hexagon + Caveman Fast)",
+            "contextWindow": 16384,
+            "maxTokens": 4096,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false,
+            "compat": { "supportsTools": false }
+          },
+          {
+            "id": "Phi-4-mini-instruct-Adreno-GPU",
+            "name": "⚡ Phi-4-Mini 3.8B (GPU Adreno + Caveman Fast ~50 tok/s)",
+            "contextWindow": 16384,
+            "maxTokens": 4096,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false,
+            "compat": { "supportsTools": false }
+          },
+          {
+            "id": "Gemma-4-31B-Adreno-GPU",
+            "name": "⚡ Gemma-4-31B (GPU Adreno + Caveman Fast)",
+            "contextWindow": 16384,
+            "maxTokens": 4096,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false,
+            "compat": { "supportsTools": false }
+          },
+          {
+            "id": "Qwen3-8B-Adreno-GPU",
+            "name": "⚡ Qwen3-8B (GPU Adreno + Caveman Fast ~30 tok/s)",
+            "contextWindow": 16384,
+            "maxTokens": 4096,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false,
+            "compat": { "supportsTools": false }
+          },
+          {
+            "id": "IvanKrastevAdventics/Qwen3.8-27B-AWQ-INT4-Q4_0-GGUF",
+            "name": "⚡ Qwen3.8-27B (NPU Hexagon + Caveman Fast)",
+            "contextWindow": 16384,
+            "maxTokens": 4096,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false,
+            "compat": { "supportsTools": false }
+          },
+          {
+            "id": "Qwen3.8-27B-Adreno-GPU",
+            "name": "⚡ Qwen3.8-27B (GPU Adreno + Caveman Fast)",
+            "contextWindow": 16384,
+            "maxTokens": 4096,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false,
+            "compat": { "supportsTools": false }
+          },
+          {
+            "id": "unsloth/Qwen3-8B-128K-GGUF",
+            "name": "⚡ Qwen3-8B (NPU Hexagon + Caveman Fast)",
+            "contextWindow": 16384,
+            "maxTokens": 4096,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false,
+            "compat": { "supportsTools": false }
+          },
+          {
+            "id": "Qwen3-4B-Adreno-GPU",
+            "name": "⚡ Qwen3-4B (GPU Adreno + Caveman Fast ~60 tok/s)",
+            "contextWindow": 16384,
+            "maxTokens": 4096,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false,
+            "compat": { "supportsTools": false }
+          },
+          {
+            "id": "unsloth/Qwen3-4B-Instruct-2507-GGUF",
+            "name": "⚡ Qwen3-4B (NPU Hexagon + Caveman Fast)",
+            "contextWindow": 16384,
+            "maxTokens": 4096,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false,
+            "compat": { "supportsTools": false }
+          },
+          {
+            "id": "google/gemma-4-E2B-it-qat-q4_0-gguf",
+            "name": "⚡ Gemma-4-E2B (NPU Hexagon + Caveman Fast ~1808 tok/s)",
+            "contextWindow": 16384,
+            "maxTokens": 4096,
+            "input": ["text", "image"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false,
+            "compat": { "supportsTools": false }
+          },
+          {
+            "id": "Gemma-4-E2B-Adreno-GPU",
+            "name": "⚡ Gemma-4-E2B (GPU Adreno + Caveman Fast ~75 tok/s)",
+            "contextWindow": 16384,
+            "maxTokens": 4096,
+            "input": ["text", "image"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false,
+            "compat": { "supportsTools": false }
+          }
+        ]
+      },
+      "custom-phi4mini-18187": {
+        "baseUrl": "http://127.0.0.1:18187/v1",
+        "apiKey": "local-phi4",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "Phi-4-mini-instruct-Adreno-GPU",
+            "name": "Phi-4-Mini 3.8B Diretto (GPU Adreno ~45-65 tok/s)",
+            "contextWindow": 16384,
+            "maxTokens": 4096,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false,
+            "compat": { "supportsTools": false }
+          }
+        ]
+      },
+      "custom-gemma31b-18186": {
+        "baseUrl": "http://127.0.0.1:18186/v1",
+        "apiKey": "local-gemma31b",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "Gemma-4-31B-Adreno-GPU",
+            "name": "Gemma-4-31B Diretto (GPU Adreno)",
+            "contextWindow": 16384,
+            "maxTokens": 4096,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false,
+            "compat": { "supportsTools": false }
+          }
+        ]
+      },
+      "custom-127-0-0-1-18181": {
+        "baseUrl": "http://127.0.0.1:18181/v1",
+        "apiKey": "local-geniex",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "google/gemma-4-E2B-it-qat-q4_0-gguf:Q4_0",
+            "name": "Gemma-4-E2B Diretto (NPU Hexagon 80 TOPS - 1808 tok/s prefill)",
+            "contextWindow": 8192,
+            "maxTokens": 4096,
+            "input": ["text", "image"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false,
+            "compat": { "supportsTools": false }
+          },
+          {
+            "id": "unsloth/Phi-4-mini-instruct-GGUF:Q4_K_M",
+            "name": "Phi-4-Mini-Instruct Diretto (NPU Hexagon 80 TOPS)",
+            "contextWindow": 8192,
+            "maxTokens": 4096,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false,
+            "compat": { "supportsTools": false }
+          },
+          {
+            "id": "unsloth/Qwen3-4B-Instruct-2507-GGUF:Q4_K_M",
+            "name": "Qwen3-4B Diretto (NPU Hexagon 80 TOPS)",
+            "contextWindow": 8192,
+            "maxTokens": 4096,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false,
+            "compat": { "supportsTools": false }
+          },
+          {
+            "id": "unsloth/Qwen3-8B-128K-GGUF:Q4_0",
+            "name": "Qwen3-8B Diretto (NPU Hexagon 80 TOPS)",
+            "contextWindow": 8192,
+            "maxTokens": 4096,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false,
+            "compat": { "supportsTools": false }
+          },
+          {
+            "id": "IvanKrastevAdventics/Qwen3.8-27B-AWQ-INT4-Q4_0-GGUF:Q4_0",
+            "name": "Qwen3.8-27B Diretto (NPU Hexagon 80 TOPS)",
+            "contextWindow": 8192,
+            "maxTokens": 4096,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false,
+            "compat": { "supportsTools": false }
+          }
+        ]
+      },
+      "custom-gemma4e2b-18189": {
+        "baseUrl": "http://127.0.0.1:18189/v1",
+        "apiKey": "local-gemma4e2b",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "Gemma-4-E2B-Adreno-GPU",
+            "name": "Gemma-4-E2B Diretto (GPU Adreno ~65-90 tok/s)",
+            "contextWindow": 16384,
+            "maxTokens": 4096,
+            "input": ["text", "image"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false,
+            "compat": { "supportsTools": false }
+          }
+        ]
+      },
+      "custom-qwen4b-18188": {
+        "baseUrl": "http://127.0.0.1:18188/v1",
+        "apiKey": "local-qwen4b",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "Qwen3-4B-Adreno-GPU",
+            "name": "Qwen3-4B Diretto (GPU Adreno ~50-75 tok/s)",
+            "contextWindow": 16384,
+            "maxTokens": 4096,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false,
+            "compat": { "supportsTools": false }
+          }
+        ]
+      },
+      "custom-qwen8b-18185": {
+        "baseUrl": "http://127.0.0.1:18185/v1",
+        "apiKey": "local-qwen8b",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "Qwen3-8B-Adreno-GPU",
+            "name": "Qwen3-8B Diretto (GPU Adreno)",
+            "contextWindow": 16384,
+            "maxTokens": 4096,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false,
+            "compat": { "supportsTools": false }
+          }
+        ]
+      },
+      "custom-qwen27b-18184": {
+        "baseUrl": "http://127.0.0.1:18184/v1",
+        "apiKey": "local-qwen27b",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "Qwen3.8-27B-Adreno-GPU",
+            "name": "Qwen3.8-27B Diretto (GPU Adreno)",
+            "contextWindow": 16384,
+            "maxTokens": 4096,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false,
+            "compat": { "supportsTools": false }
+          }
+        ]
+      },
+      "custom-muse-18183": {
+        "baseUrl": "http://127.0.0.1:18183/v1",
+        "apiKey": "local-muse",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "Muse-Glimmer-30B-Vision-GPU",
+            "name": "Muse Glimmer 30B (Visione + DFlash GPU)",
+            "contextWindow": 16384,
+            "maxTokens": 4096,
+            "input": ["text", "image"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false,
+            "compat": { "supportsTools": false }
+          }
+        ]
+      }
+    }
+  }
 }

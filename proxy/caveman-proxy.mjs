@@ -23,7 +23,9 @@ const server = http.createServer((req, res) => {
   if (req.method === 'GET' && (url.pathname === '/v1/models' || url.pathname === '/models')) {
     const endpoints = [
       { name: 'NPU', url: 'http://127.0.0.1:18181' },
+      { name: 'GPU-Gemma4E2B', url: 'http://127.0.0.1:18189' },
       { name: 'GPU-Phi4', url: 'http://127.0.0.1:18187' },
+      { name: 'GPU-4B', url: 'http://127.0.0.1:18188' },
       { name: 'GPU-Gemma31B', url: 'http://127.0.0.1:18186' },
       { name: 'GPU-27B', url: 'http://127.0.0.1:18184' },
       { name: 'GPU-8B', url: 'http://127.0.0.1:18185' },
@@ -73,13 +75,26 @@ const server = http.createServer((req, res) => {
         let currentTarget = UPSTREAM_URL; // Defaults to GenieX NPU (18181)
         const lowerModel = cleanModel.toLowerCase();
 
-        if (lowerModel.includes('gpu-phi4') || (lowerModel.includes('phi') && lowerModel.includes('gpu'))) {
+        if (lowerModel.includes('e2b') || lowerModel.includes('gemma4e2b') || lowerModel.includes('gemma-4-e2b') || (lowerModel.includes('gemma') && lowerModel.includes('2b'))) {
+          // Gemma 4 uses the new peg-gemma4 chat template (<|turn>...<turn|>) supported natively by llama-server on GPU (port 18189).
+          // GenieX NPU (18181) currently applies legacy Gemma 2 <start_of_turn> template, which causes <unusedXX> token loops.
+          currentTarget = 'http://127.0.0.1:18189';
+          cleanModel = 'Gemma-4-E2B-Adreno-GPU';
+        } else if (lowerModel.includes('gpu-phi4') || (lowerModel.includes('phi') && lowerModel.includes('gpu'))) {
           currentTarget = 'http://127.0.0.1:18187';
           cleanModel = 'Phi-4-mini-instruct-Adreno-GPU';
         } else if (lowerModel.includes('phi-4') || lowerModel.includes('phi4')) {
           currentTarget = 'http://127.0.0.1:18181';
           if (!cleanModel.includes('/') && !cleanModel.includes(':')) {
             cleanModel = 'unsloth/Phi-4-mini-instruct-GGUF:Q4_K_M';
+          }
+        } else if (lowerModel.includes('gpu-4b') || (lowerModel.includes('4b') && lowerModel.includes('gpu')) || lowerModel.includes('qwen3-4b-adreno-gpu')) {
+          currentTarget = 'http://127.0.0.1:18188';
+          cleanModel = 'Qwen3-4B-Adreno-GPU';
+        } else if (lowerModel.includes('4b') || lowerModel.includes('qwen3-4b')) {
+          currentTarget = 'http://127.0.0.1:18181';
+          if (!cleanModel.includes('/') && !cleanModel.includes(':')) {
+            cleanModel = 'unsloth/Qwen3-4B-Instruct-2507-GGUF:Q4_K_M';
           }
         } else if (lowerModel.includes('gemma') || lowerModel.includes('31b')) {
           currentTarget = 'http://127.0.0.1:18186';
@@ -107,13 +122,30 @@ const server = http.createServer((req, res) => {
 
         payload.model = cleanModel;
 
-        // ULTRA PROMPT COMPRESSION: Strip the 3,000-token system prompt and replace with slim prompt
+        // ULTRA PROMPT COMPRESSION: Strip heavy system prompt and format per-model
         if (Array.isArray(payload.messages)) {
-          const sysIdx = payload.messages.findIndex(m => m.role === 'system');
-          if (sysIdx >= 0) {
-            payload.messages[sysIdx].content = SLIM_SYSTEM_PROMPT;
+          const isGemma = lowerModel.includes('gemma');
+          const promptText = isGemma
+            ? 'Sei un assistente AI avanzato. Rispondi sempre in italiano, in modo chiaro, utile, diretto e accurato.'
+            : SLIM_SYSTEM_PROMPT;
+
+          if (isGemma) {
+            // Gemma does not support a separate 'system' role in its chat template.
+            // Merge system instructions directly into the first user turn to avoid <unusedXX> multimodal token loops.
+            payload.messages = payload.messages.filter(m => m.role !== 'system');
+            const firstUserIdx = payload.messages.findIndex(m => m.role === 'user');
+            if (firstUserIdx >= 0) {
+              payload.messages[firstUserIdx].content = `${promptText}\n\n${payload.messages[firstUserIdx].content}`;
+            } else {
+              payload.messages.unshift({ role: 'user', content: promptText });
+            }
           } else {
-            payload.messages.unshift({ role: 'system', content: SLIM_SYSTEM_PROMPT });
+            const sysIdx = payload.messages.findIndex(m => m.role === 'system');
+            if (sysIdx >= 0) {
+              payload.messages[sysIdx].content = promptText;
+            } else {
+              payload.messages.unshift({ role: 'system', content: promptText });
+            }
           }
         }
 
@@ -123,7 +155,9 @@ const server = http.createServer((req, res) => {
 
         const fallbackEndpoints = [
           currentTarget,
+          'http://127.0.0.1:18189',
           'http://127.0.0.1:18187',
+          'http://127.0.0.1:18188',
           'http://127.0.0.1:18186',
           'http://127.0.0.1:18184',
           'http://127.0.0.1:18185',
@@ -285,6 +319,6 @@ server.listen(PROXY_PORT, '127.0.0.1', () => {
   console.log(`================================================================`);
   console.log(`⚡ Prompt Compressor Proxy running on http://127.0.0.1:${PROXY_PORT}`);
   console.log(`   - Compresses 3,000+ token OpenClaw prompts down to ~40 tokens`);
-  console.log(`   - Routes to GenieX NPU (18181) e GPU (18187/18186/18184/18185/18183)`);
+  console.log(`   - Routes to GenieX NPU (18181) e GPU (18189/18187/18188/18186/18184/18185/18183)`);
   console.log(`================================================================`);
 });

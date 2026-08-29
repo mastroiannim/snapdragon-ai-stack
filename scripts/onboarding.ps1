@@ -269,6 +269,18 @@ $ModelChecks = @(
         Patterns = @("Phi-4-mini-instruct*.gguf", "*phi-4-mini*.gguf", "Phi-4-mini-instruct-Q4_K_M.gguf", "Phi-4-mini-instruct-Q4_0.gguf")
         SubDir = "Phi-4-mini-instruct"
         DownloadHint = "unsloth/Phi-4-mini-instruct-GGUF (https://aihub.qualcomm.com/models/phi_4_mini_instruct)"
+    },
+    @{
+        Name = "Qwen3-4B (Qualcomm AI Hub / GPU)"
+        Patterns = @("Qwen3-4B*.gguf", "*4b*.gguf", "Qwen3-4B-Instruct*.gguf", "Qwen3-4B-Instruct-2507-Q4_K_M.gguf")
+        SubDir = "Qwen3-4B"
+        DownloadHint = "unsloth/Qwen3-4B-Instruct-2507-GGUF (https://aihub.qualcomm.com/models/qwen3_4b)"
+    },
+    @{
+        Name = "Gemma-4-E2B-it (Qualcomm AI Hub / NPU Hexagon & GPU)"
+        Patterns = @("gemma-4-E2B*.gguf", "*gemma-4-e2b*.gguf", "gemma-4-E2B_q4_0-it.gguf", "gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf")
+        SubDir = "Gemma-4-E2B"
+        DownloadHint = "google/gemma-4-E2B-it-qat-q4_0-gguf (https://aihub.qualcomm.com/models/gemma_4_e2b_it)"
     }
 )
 
@@ -375,10 +387,12 @@ Write-Host "  2. 4_Server_Qwen8B_GPU.cmd          -> Server GPU Adreno Vulkan Qw
 Write-Host "  3. 5_Server_Qwen27B_GPU.cmd         -> Server GPU Adreno Vulkan Qwen3.8-27B (Porta 18184)" -ForegroundColor White
 Write-Host "  4. 7_Server_Gemma31B_GPU.cmd        -> Server GPU Adreno Vulkan Gemma 4 31B (Porta 18186)" -ForegroundColor White
 Write-Host "  5. 8_Server_Phi4Mini_GPU.cmd        -> Server GPU Adreno Vulkan Phi-4 Mini (Porta 18187)" -ForegroundColor White
-Write-Host "  6. 3_Server_MuseGlimmer_30B_Vision.cmd -> Server Vision Multimodale (Porta 18183)" -ForegroundColor White
-Write-Host "  7. 6_Proxy_Compressore_OpenClaw.cmd -> Caveman Fast Proxy con compressione prompt (Porta 18182)" -ForegroundColor White
-Write-Host "  8. 1_Avvia_Dashboard_WebUI.cmd      -> Dashboard Chat Open-WebUI (Porta 8080)" -ForegroundColor White
-Write-Host "  9. Stop_Tutti_I_Server.cmd          -> Termina tutti i processi e libera memoria" -ForegroundColor White
+Write-Host "  6. 9_Server_Qwen4B_GPU.cmd          -> Server GPU Adreno Vulkan Qwen3-4B (Porta 18188)" -ForegroundColor White
+Write-Host "  7. 10_Server_Gemma4E2B_GPU.cmd       -> Server GPU Adreno Vulkan Gemma 4 E2B (Porta 18189)" -ForegroundColor White
+Write-Host "  8. 3_Server_MuseGlimmer_30B_Vision.cmd -> Server Vision Multimodale (Porta 18183)" -ForegroundColor White
+Write-Host "  9. 6_Proxy_Compressore_OpenClaw.cmd -> Caveman Fast Proxy con compressione prompt (Porta 18182)" -ForegroundColor White
+Write-Host "  10. 1_Avvia_Dashboard_WebUI.cmd     -> Dashboard Chat Open-WebUI (Porta 8080)" -ForegroundColor White
+Write-Host "  11. Stop_Tutti_I_Server.cmd          -> Termina tutti i processi e libera memoria" -ForegroundColor White
 Write-Host ""
 Write-Host "=========================================================================" -ForegroundColor Cyan
 Write-Host " Verifica completata! Per iniziare, esegui un server o il proxy." -ForegroundColor Green

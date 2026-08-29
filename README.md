@@ -12,9 +12,9 @@
   - **llama-cpp-hexagon-arm64**: Backend Hexagon NPU con runtime QAIRT / QNN v75/v79/v81 (ggml-hexagon.dll, HTP libraries).
   - **llama-cpp-adreno-arm64**: Backend GPU OpenCL legacy (ggml-opencl.dll).
   - **llama-cpp-arm64**: Backend CPU multi-thread nativo Oryon ARM64.
-- 🧠 **Hexagon NPU Hub (80 TOPS)**: Server locale su porta 18181 tramite QNN/HTP con prefill fulmineo a **837.6 tok/s** e consumo di soli **4W–8W**.
+- 🧠 **Hexagon NPU Hub (80 TOPS)**: Server locale su porta 18181 tramite QNN/HTP con prefill fulmineo fino a **1.808 tok/s** (Gemma-4-E2B) / **837.6 tok/s** (Qwen 8B) e consumo di soli **4W–8W**.
 - ⚡ **Caveman Fast Proxy (Porta 18182)**: Middleware intelligente Node.js che comprime i prompt di sistema del **98.8%** (da 3.400+ a ~40 token), azzera il Time-To-First-Token (TTFT < 80ms) e offre auto-fallback tra NPU e GPU.
-- 👁️ **Multimodale + Speculative Decoding (Porta 18183)**: Supporto per visione (immagini/screenshot) con *Muse Glimmer 30B* e DFlash Speculative Decoding fino a **20 tok/s**.
+- 👁️ **Multimodale + Speculative Decoding (Porta 18183 / 18189)**: Supporto nativo per visione (immagini/screenshot) con *Gemma 4 E2B* e *Muse Glimmer 30B* con DFlash Speculative Decoding fino a **20 tok/s**.
 - 🌐 **Dashboard Unificata Open-WebUI (Porta 8080)**: Interfaccia web per chattare con tutti i modelli locali.
 - 🔌 **Compatibilità Totale con VSCode Cline & OpenClaw**: Endpoint compatibili OpenAI /v1/chat/completions.
 - 🛠️ **Toolchain e SDK di Build Inclusi (sdk/ e scripts/)**: Header Vulkan e SPIR-V ufficiali Khronos, librerie d'importazione libvulkan-1.a, patch C++ e script di compilazione automatizzati con Clang/LLVM 22 ARM64.
@@ -38,8 +38,10 @@
 | Porta | Servizio | Hardware | Scopo Consigliato |
 | :--- | :--- | :--- | :--- |
 | **18182** | 6_Proxy_Compressore_OpenClaw.cmd | Node.js Middleware | **Tutti i client (OpenClaw, WebUI, TTFT azzerato)** |
-| **18181** | 2_Server_GenieX_NPU.cmd | Hexagon NPU (80 TOPS) | Grandi contesti, Coding RAG, Batteria (Phi-4, Qwen) |
+| **18181** | 2_Server_GenieX_NPU.cmd | Hexagon NPU (80 TOPS) | Efficienza estrema, NPU 1.808 tok/s prefill (Gemma 4 E2B, Phi-4, Qwen) |
+| **18189** | 10_Server_Gemma4E2B_GPU.cmd | Adreno GPU (Vulkan 1.85 GHz) | Visione multimodale, reasoning ultra-rapido (~65–90 tok/s) |
 | **18187** | 8_Server_Phi4Mini_GPU.cmd | Adreno GPU (Vulkan 1.85 GHz) | Reasoning veloce, logica matematica, coding compatto (~45–65 tok/s) |
+| **18188** | 9_Server_Qwen4B_GPU.cmd | Adreno GPU (Vulkan 1.85 GHz) | Chat rapida, reasoning bilanciato e multilingua (~50–75 tok/s) |
 | **18185** | 4_Server_Qwen8B_GPU.cmd | Adreno GPU (Vulkan 1.85 GHz) | Chat rapida, scrittura istantanea (~35 tok/s) |
 | **18186** | 7_Server_Gemma31B_GPU.cmd | Adreno GPU (Vulkan 1.85 GHz) | Reasoning avanzato e coding multi-step (~6–9 tok/s) |
 | **18184** | 5_Server_Qwen27B_GPU.cmd | Adreno GPU (Vulkan 1.85 GHz) | Coding complesso in VSCode Cline (~12 tok/s) |
@@ -103,7 +105,7 @@ Scarica i modelli quantizzati ottimizzati per l'architettura Snapdragon:
 ### 4. Avvia i Server e Inizia a Chattare
 Dalla cartella `launchers/` puoi avviare con un doppio clic:
 1. `0_Setup_Onboarding.cmd` (per diagnosticare e verificare l'intero stack).
-2. `8_Server_Phi4Mini_GPU.cmd` (per Phi-4 Mini su GPU Vulkan ~45–65 tok/s) oppure `2_Server_GenieX_NPU.cmd` (per NPU 80 TOPS).
+2. `10_Server_Gemma4E2B_GPU.cmd` (per Gemma 4 E2B su GPU ~65–90 tok/s), `9_Server_Qwen4B_GPU.cmd` (~50–75 tok/s), `8_Server_Phi4Mini_GPU.cmd` (~45–65 tok/s) oppure `2_Server_GenieX_NPU.cmd` (per NPU 80 TOPS).
 3. `6_Proxy_Compressore_OpenClaw.cmd` (per azzerare il TTFT e comprimere i prompt).
 4. `1_Avvia_Dashboard_WebUI.cmd` (per aprire l'interfaccia nel browser su http://localhost:8080).
 
