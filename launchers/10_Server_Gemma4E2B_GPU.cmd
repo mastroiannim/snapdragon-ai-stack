@@ -48,7 +48,7 @@ echo.
   --port 18189 ^
   --alias "Gemma-4-E2B-Adreno-GPU" ^
   -c 16384 ^
-  -np 1 ^
+  -np 4 ^
   -t 8 ^
   -lv 0
 

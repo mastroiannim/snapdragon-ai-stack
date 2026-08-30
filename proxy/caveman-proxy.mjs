@@ -153,6 +153,18 @@ const server = http.createServer((req, res) => {
         delete payload.tools;
         delete payload.tool_choice;
 
+        // Map endpoints to their native model alias for fallback adaptation
+        const endpointModelMap = {
+          'http://127.0.0.1:18189': 'Gemma-4-E2B-Adreno-GPU',
+          'http://127.0.0.1:18187': 'Phi-4-mini-instruct-Adreno-GPU',
+          'http://127.0.0.1:18188': 'Qwen3-4B-Adreno-GPU',
+          'http://127.0.0.1:18186': 'Gemma-4-31B-Adreno-GPU',
+          'http://127.0.0.1:18184': 'Qwen3.8-27B-Adreno-GPU',
+          'http://127.0.0.1:18185': 'Qwen3-8B-Adreno-GPU',
+          'http://127.0.0.1:18181': 'unsloth/Qwen3-4B-Instruct-2507-GGUF:Q4_K_M',
+          'http://127.0.0.1:18183': 'Muse-Glimmer-30B-Vision-GPU'
+        };
+
         const fallbackEndpoints = [
           currentTarget,
           'http://127.0.0.1:18189',
@@ -164,31 +176,68 @@ const server = http.createServer((req, res) => {
           'http://127.0.0.1:18181',
           'http://127.0.0.1:18183'
         ];
-        // Deduplicate
+        // Deduplicate with primary target first
         const uniqueEndpoints = [...new Set(fallbackEndpoints)];
 
         let upstreamRes = null;
         let activeTargetUrl = '';
         const startTime = Date.now();
+        const attemptedErrors = [];
 
-        for (const ep of uniqueEndpoints) {
-          try {
-            const targetUrl = `${ep}${url.pathname}${url.search}`;
-            console.log(`[Compressor Proxy] Ingesting request -> Forwarding compressed prompt (${payload.messages.length} msgs) to ${targetUrl}...`);
-            upstreamRes = await fetch(targetUrl, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(payload)
-            });
-            activeTargetUrl = targetUrl;
+        for (let i = 0; i < uniqueEndpoints.length; i++) {
+          const ep = uniqueEndpoints[i];
+          const isPrimary = (i === 0);
+          const maxRetries = isPrimary ? 3 : 1;
+          const initialDelayMs = 300;
+
+          // Adapt model payload if falling back to an alternative server
+          const epPayload = { ...payload };
+          if (!isPrimary && endpointModelMap[ep]) {
+            epPayload.model = endpointModelMap[ep];
+          }
+
+          const targetUrl = `${ep}${url.pathname}${url.search}`;
+
+          for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            try {
+              if (attempt === 1) {
+                console.log(`[Compressor Proxy] Ingesting request -> Forwarding compressed prompt (${epPayload.messages?.length || 0} msgs) to ${targetUrl}...`);
+              }
+              upstreamRes = await fetch(targetUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(epPayload),
+                signal: AbortSignal.timeout(isPrimary ? 120000 : 2500)
+              });
+              activeTargetUrl = targetUrl;
+              if (attempt > 1) {
+                console.log(`[Compressor Proxy] ⚡ Connection restored to ${targetUrl} on attempt ${attempt}!`);
+              }
+              break;
+            } catch (err) {
+              const errCode = err.cause?.code || err.code || err.message;
+              if (attempt < maxRetries) {
+                const delay = initialDelayMs * Math.pow(2, attempt - 1);
+                console.warn(`[Compressor Proxy] Target ${ep} busy or transient error (${errCode}). Retrying in ${delay}ms (tentativo ${attempt}/${maxRetries})...`);
+                await new Promise(r => setTimeout(r, delay));
+              } else {
+                attemptedErrors.push(`${ep} (${errCode})`);
+                if (isPrimary) {
+                  console.warn(`[Compressor Proxy] Primary target ${ep} failed after ${maxRetries} attempts (${errCode}). Trying fallbacks...`);
+                } else {
+                  console.warn(`[Compressor Proxy] Fallback endpoint ${ep} not reachable (${errCode}).`);
+                }
+              }
+            }
+          }
+
+          if (upstreamRes) {
             break;
-          } catch (err) {
-            console.warn(`[Compressor Proxy] Endpoint ${ep} not reachable (${err.message}). Trying fallback...`);
           }
         }
 
         if (!upstreamRes) {
-          throw new Error('Nessun server AI locale e attualmente in esecuzione (18181, 18184, 18185, 18183 sono tutti spenti).');
+          throw new Error(`Nessun server AI locale raggiungibile. Endpoint testati: ${attemptedErrors.join(', ')}.`);
         }
 
         if (!upstreamRes.ok) {
