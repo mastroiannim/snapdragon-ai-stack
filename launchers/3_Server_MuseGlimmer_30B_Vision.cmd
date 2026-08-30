@@ -47,7 +47,7 @@ echo.
   --host 127.0.0.1 ^
   --port 18183 ^
   --alias "Muse-Glimmer-30B-Vision-GPU" ^
-  -c 16384 ^
+  -c 65536 ^
   -np 1 ^
   -t 8 ^
   -lv 0

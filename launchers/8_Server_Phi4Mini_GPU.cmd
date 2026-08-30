@@ -45,7 +45,7 @@ echo.
   --host 127.0.0.1 ^
   --port 18187 ^
   --alias "Phi-4-mini-instruct-Adreno-GPU" ^
-  -c 16384 ^
+  -c 65536 ^
   -np 4 ^
   -t 8 ^
   -lv 0

@@ -5,7 +5,7 @@
   "openAiApiKey": "local",
   "openAiModelId": "Qwen3.8-27B-Adreno-GPU",
   "openAiCustomModelInfo": {
-    "contextWindow": 16384,
+    "contextWindow": 32768,
     "maxTokens": 4096,
     "supportsPromptCache": true
   }

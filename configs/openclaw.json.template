@@ -88,7 +88,7 @@
           {
             "id": "unsloth/Phi-4-mini-instruct-GGUF",
             "name": "⚡ Phi-4-Mini 3.8B (NPU Hexagon + Caveman Fast)",
-            "contextWindow": 16384,
+            "contextWindow": 32768,
             "maxTokens": 4096,
             "input": ["text"],
             "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
@@ -98,7 +98,7 @@
           {
             "id": "Phi-4-mini-instruct-Adreno-GPU",
             "name": "⚡ Phi-4-Mini 3.8B (GPU Adreno + Caveman Fast ~50 tok/s)",
-            "contextWindow": 16384,
+            "contextWindow": 32768,
             "maxTokens": 4096,
             "input": ["text"],
             "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
@@ -108,7 +108,7 @@
           {
             "id": "Gemma-4-31B-Adreno-GPU",
             "name": "⚡ Gemma-4-31B (GPU Adreno + Caveman Fast)",
-            "contextWindow": 16384,
+            "contextWindow": 32768,
             "maxTokens": 4096,
             "input": ["text"],
             "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
@@ -118,7 +118,7 @@
           {
             "id": "Qwen3-8B-Adreno-GPU",
             "name": "⚡ Qwen3-8B (GPU Adreno + Caveman Fast ~30 tok/s)",
-            "contextWindow": 16384,
+            "contextWindow": 32768,
             "maxTokens": 4096,
             "input": ["text"],
             "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
@@ -128,7 +128,7 @@
           {
             "id": "IvanKrastevAdventics/Qwen3.8-27B-AWQ-INT4-Q4_0-GGUF",
             "name": "⚡ Qwen3.8-27B (NPU Hexagon + Caveman Fast)",
-            "contextWindow": 16384,
+            "contextWindow": 32768,
             "maxTokens": 4096,
             "input": ["text"],
             "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
@@ -138,7 +138,7 @@
           {
             "id": "Qwen3.8-27B-Adreno-GPU",
             "name": "⚡ Qwen3.8-27B (GPU Adreno + Caveman Fast)",
-            "contextWindow": 16384,
+            "contextWindow": 32768,
             "maxTokens": 4096,
             "input": ["text"],
             "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
@@ -148,7 +148,7 @@
           {
             "id": "unsloth/Qwen3-8B-128K-GGUF",
             "name": "⚡ Qwen3-8B (NPU Hexagon + Caveman Fast)",
-            "contextWindow": 16384,
+            "contextWindow": 32768,
             "maxTokens": 4096,
             "input": ["text"],
             "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
@@ -158,7 +158,7 @@
           {
             "id": "Qwen3-4B-Adreno-GPU",
             "name": "⚡ Qwen3-4B (GPU Adreno + Caveman Fast ~60 tok/s)",
-            "contextWindow": 16384,
+            "contextWindow": 32768,
             "maxTokens": 4096,
             "input": ["text"],
             "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
@@ -168,7 +168,7 @@
           {
             "id": "unsloth/Qwen3-4B-Instruct-2507-GGUF",
             "name": "⚡ Qwen3-4B (NPU Hexagon + Caveman Fast)",
-            "contextWindow": 16384,
+            "contextWindow": 32768,
             "maxTokens": 4096,
             "input": ["text"],
             "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
@@ -178,7 +178,7 @@
           {
             "id": "google/gemma-4-E2B-it-qat-q4_0-gguf",
             "name": "⚡ Gemma-4-E2B (NPU Hexagon + Caveman Fast ~1808 tok/s)",
-            "contextWindow": 16384,
+            "contextWindow": 32768,
             "maxTokens": 4096,
             "input": ["text", "image"],
             "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
@@ -188,7 +188,7 @@
           {
             "id": "Gemma-4-E2B-Adreno-GPU",
             "name": "⚡ Gemma-4-E2B (GPU Adreno + Caveman Fast ~75 tok/s)",
-            "contextWindow": 16384,
+            "contextWindow": 32768,
             "maxTokens": 4096,
             "input": ["text", "image"],
             "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
@@ -205,7 +205,7 @@
           {
             "id": "Phi-4-mini-instruct-Adreno-GPU",
             "name": "Phi-4-Mini 3.8B Diretto (GPU Adreno ~45-65 tok/s)",
-            "contextWindow": 16384,
+            "contextWindow": 32768,
             "maxTokens": 4096,
             "input": ["text"],
             "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
@@ -222,7 +222,7 @@
           {
             "id": "Gemma-4-31B-Adreno-GPU",
             "name": "Gemma-4-31B Diretto (GPU Adreno)",
-            "contextWindow": 16384,
+            "contextWindow": 32768,
             "maxTokens": 4096,
             "input": ["text"],
             "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
@@ -296,7 +296,7 @@
           {
             "id": "Gemma-4-E2B-Adreno-GPU",
             "name": "Gemma-4-E2B Diretto (GPU Adreno ~65-90 tok/s)",
-            "contextWindow": 16384,
+            "contextWindow": 32768,
             "maxTokens": 4096,
             "input": ["text", "image"],
             "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
@@ -313,7 +313,7 @@
           {
             "id": "Qwen3-4B-Adreno-GPU",
             "name": "Qwen3-4B Diretto (GPU Adreno ~50-75 tok/s)",
-            "contextWindow": 16384,
+            "contextWindow": 32768,
             "maxTokens": 4096,
             "input": ["text"],
             "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
@@ -330,7 +330,7 @@
           {
             "id": "Qwen3-8B-Adreno-GPU",
             "name": "Qwen3-8B Diretto (GPU Adreno)",
-            "contextWindow": 16384,
+            "contextWindow": 32768,
             "maxTokens": 4096,
             "input": ["text"],
             "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
@@ -347,7 +347,7 @@
           {
             "id": "Qwen3.8-27B-Adreno-GPU",
             "name": "Qwen3.8-27B Diretto (GPU Adreno)",
-            "contextWindow": 16384,
+            "contextWindow": 32768,
             "maxTokens": 4096,
             "input": ["text"],
             "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
@@ -364,7 +364,7 @@
           {
             "id": "Muse-Glimmer-30B-Vision-GPU",
             "name": "Muse Glimmer 30B (Visione + DFlash GPU)",
-            "contextWindow": 16384,
+            "contextWindow": 32768,
             "maxTokens": 4096,
             "input": ["text", "image"],
             "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },

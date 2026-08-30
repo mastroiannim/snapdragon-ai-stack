@@ -42,7 +42,7 @@ echo.
   --host 127.0.0.1 ^
   --port 18185 ^
   --alias "Qwen3-8B-Adreno-GPU" ^
-  -c 16384 ^
+  -c 65536 ^
   -np 2 ^
   -t 8 ^
   -lv 0
