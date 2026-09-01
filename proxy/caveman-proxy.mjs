@@ -184,6 +184,8 @@ const server = http.createServer((req, res) => {
         const startTime = Date.now();
         const attemptedErrors = [];
 
+        const PRIMARY_TIMEOUT_MS = parseInt(process.env.PRIMARY_TIMEOUT_MS || '900000', 10); // 15 min for 64K token prompts
+
         for (let i = 0; i < uniqueEndpoints.length; i++) {
           const ep = uniqueEndpoints[i];
           const isPrimary = (i === 0);
@@ -207,7 +209,7 @@ const server = http.createServer((req, res) => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(epPayload),
-                signal: AbortSignal.timeout(isPrimary ? 120000 : 2500)
+                signal: AbortSignal.timeout(isPrimary ? PRIMARY_TIMEOUT_MS : 2500)
               });
               activeTargetUrl = targetUrl;
               if (attempt > 1) {
@@ -242,8 +244,10 @@ const server = http.createServer((req, res) => {
 
         if (!upstreamRes.ok) {
           const errText = await upstreamRes.text();
-          res.writeHead(upstreamRes.status, { 'Content-Type': 'application/json' });
-          res.end(errText);
+          if (!res.headersSent) {
+            res.writeHead(upstreamRes.status, { 'Content-Type': 'application/json' });
+            res.end(errText);
+          }
           return;
         }
 
@@ -251,28 +255,64 @@ const server = http.createServer((req, res) => {
         const fallbackCreated = Math.floor(Date.now() / 1000);
 
         if (payload.stream) {
-          res.writeHead(200, {
-            'Content-Type': 'text/event-stream',
-            'Cache-Control': 'no-cache',
-            'Connection': 'keep-alive'
-          });
+          if (!res.headersSent) {
+            res.writeHead(200, {
+              'Content-Type': 'text/event-stream',
+              'Cache-Control': 'no-cache',
+              'Connection': 'keep-alive'
+            });
+          }
 
           const decoder = new TextDecoder();
           const reader = upstreamRes.body.getReader();
           let totalBytes = 0;
           let buffer = '';
 
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-            totalBytes += value.length;
-            buffer += decoder.decode(value, { stream: true });
+          try {
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              totalBytes += value.length;
+              buffer += decoder.decode(value, { stream: true });
 
-            const lines = buffer.split('\n');
-            buffer = lines.pop(); // Keep incomplete line
+              const lines = buffer.split('\n');
+              buffer = lines.pop(); // Keep incomplete line
 
-            for (const line of lines) {
-              const trimmed = line.trim();
+              for (const line of lines) {
+                const trimmed = line.trim();
+                if (trimmed.startsWith('data:')) {
+                  const dataPayload = trimmed.slice(5).trim();
+                  if (dataPayload === '[DONE]') {
+                    res.write(`data: [DONE]\n\n`);
+                  } else if (dataPayload) {
+                    try {
+                      const parsed = JSON.parse(dataPayload);
+                      if (!parsed.model || parsed.model === '') {
+                        parsed.model = requestedModel;
+                      }
+                      if (!parsed.id || parsed.id === '') {
+                        parsed.id = fallbackId;
+                      }
+                      if (!parsed.created || parsed.created === 0) {
+                        parsed.created = fallbackCreated;
+                      }
+                      res.write(`data: ${JSON.stringify(parsed)}\n\n`);
+                    } catch {
+                      res.write(`${line}\n`);
+                    }
+                  } else {
+                    res.write(`\n`);
+                  }
+                } else if (line.length > 0) {
+                  res.write(`${line}\n`);
+                } else {
+                  res.write(`\n`);
+                }
+              }
+            }
+
+            if (buffer.trim()) {
+              const trimmed = buffer.trim();
               if (trimmed.startsWith('data:')) {
                 const dataPayload = trimmed.slice(5).trim();
                 if (dataPayload === '[DONE]') {
@@ -291,50 +331,18 @@ const server = http.createServer((req, res) => {
                     }
                     res.write(`data: ${JSON.stringify(parsed)}\n\n`);
                   } catch {
-                    res.write(`${line}\n`);
+                    res.write(`${buffer}\n`);
                   }
-                } else {
-                  res.write(`\n`);
                 }
-              } else if (line.length > 0) {
-                res.write(`${line}\n`);
               } else {
-                res.write(`\n`);
+                res.write(`${buffer}\n`);
               }
             }
+          } finally {
+            res.end();
+            const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
+            console.log(`[Compressor Proxy] <- Stream complete in ${elapsed}s (${totalBytes} bytes).`);
           }
-
-          if (buffer.trim()) {
-            const trimmed = buffer.trim();
-            if (trimmed.startsWith('data:')) {
-              const dataPayload = trimmed.slice(5).trim();
-              if (dataPayload === '[DONE]') {
-                res.write(`data: [DONE]\n\n`);
-              } else if (dataPayload) {
-                try {
-                  const parsed = JSON.parse(dataPayload);
-                  if (!parsed.model || parsed.model === '') {
-                    parsed.model = requestedModel;
-                  }
-                  if (!parsed.id || parsed.id === '') {
-                    parsed.id = fallbackId;
-                  }
-                  if (!parsed.created || parsed.created === 0) {
-                    parsed.created = fallbackCreated;
-                  }
-                  res.write(`data: ${JSON.stringify(parsed)}\n\n`);
-                } catch {
-                  res.write(`${buffer}\n`);
-                }
-              }
-            } else {
-              res.write(`${buffer}\n`);
-            }
-          }
-
-          res.end();
-          const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
-          console.log(`[Compressor Proxy] <- Stream complete in ${elapsed}s (${totalBytes} bytes).`);
         } else {
           const json = await upstreamRes.json();
           if (!json.model || json.model === '') {
@@ -348,13 +356,19 @@ const server = http.createServer((req, res) => {
           }
           const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
           console.log(`[Compressor Proxy] <- Response complete in ${elapsed}s.`);
-          res.writeHead(200, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify(json));
+          if (!res.headersSent) {
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(json));
+          }
         }
       } catch (err) {
-        console.error('[Compressor Proxy Error]:', err);
-        res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Proxy internal error', message: err.message }));
+        console.error('[Compressor Proxy Error]:', err.message || err);
+        if (!res.headersSent) {
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Proxy internal error', message: err.message }));
+        } else {
+          res.end();
+        }
       }
     });
     return;
@@ -364,10 +378,19 @@ const server = http.createServer((req, res) => {
   res.end('Not Found');
 });
 
+process.on('uncaughtException', (err) => {
+  console.error('[Compressor Proxy Uncaught Exception]:', err.message || err);
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('[Compressor Proxy Unhandled Rejection]:', reason?.message || reason);
+});
+
 server.listen(PROXY_PORT, '127.0.0.1', () => {
   console.log(`================================================================`);
   console.log(`⚡ Prompt Compressor Proxy running on http://127.0.0.1:${PROXY_PORT}`);
   console.log(`   - Compresses 3,000+ token OpenClaw prompts down to ~40 tokens`);
   console.log(`   - Routes to GenieX NPU (18181) e GPU (18189/18187/18188/18186/18184/18185/18183)`);
+  console.log(`   - Context window support: up to 65,536 tokens (Timeout: 15 min)`);
   console.log(`================================================================`);
 });

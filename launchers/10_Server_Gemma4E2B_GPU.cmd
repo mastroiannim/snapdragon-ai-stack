@@ -47,8 +47,8 @@ echo.
   --host 127.0.0.1 ^
   --port 18189 ^
   --alias "Gemma-4-E2B-Adreno-GPU" ^
-  -c 65536  ^
-  -np 4 ^
+  -c 65536 ^
+  -np 1 ^
   -t 8 ^
   -lv 0
 

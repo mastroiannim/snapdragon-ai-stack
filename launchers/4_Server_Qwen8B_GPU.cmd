@@ -43,7 +43,7 @@ echo.
   --port 18185 ^
   --alias "Qwen3-8B-Adreno-GPU" ^
   -c 65536 ^
-  -np 2 ^
+  -np 1 ^
   -t 8 ^
   -lv 0
 

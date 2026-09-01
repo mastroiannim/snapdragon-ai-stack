@@ -46,7 +46,7 @@ echo.
   --port 18187 ^
   --alias "Phi-4-mini-instruct-Adreno-GPU" ^
   -c 65536 ^
-  -np 4 ^
+  -np 1 ^
   -t 8 ^
   -lv 0
 
